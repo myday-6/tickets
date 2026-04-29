@@ -8,7 +8,7 @@
 const CONFIG = {
   // Google Apps Script 웹앱 배포 URL을 아래에 입력하세요.
   // 예시: 'https://script.google.com/macros/s/AKfycb.../exec'
-  GAS_URL: 'https://script.google.com/macros/s/AKfycbykLArfe2_SdzDLdzH_KosdjyqXF6H70EfJvjra_ypw_9ldU7J8OjrStzA_dLNwsqPqUw/exec',
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbxn6zUjU0QnzRI13TRvR9vzzRhLZghOVskDvh9PWuiJHpptk5gg_ktV8xn593aPMjbhjg/exec',
 
   APP_NAME: '🎫 티켓 관리 시스템',
 
