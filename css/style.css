@@ -9,8 +9,8 @@
 :root {
   --pink:        #FFD1DC;
   --pink-dark:   #FF99AA;
-  --pink-light:  #FFF0F3;
-  --pink-xlight: #FFF5F7;
+  --pink-light:  #FFFDF0;
+  --pink-xlight: #FFFDF0;
   --mint:        #E0F2F1;
   --mint-dark:   #80CBC4;
   --peach:       #FFF3E0;
@@ -22,13 +22,13 @@
   --blue:        #E1F5FE;
   --blue-dark:   #81D4FA;
 
-  --bg:          #FFFDF5;
+  --bg:          #FFFDF0;
   --card:        #FFFFFF;
   --text:        #5C4A5A;
   --text-light:  #9B8EA0;
   --text-dark:   #3D2E3A;
-  --border:      #F0D0D8;
-  --border-dark: #E0B8C4;
+  --border:      #EADBC8;
+  --border-dark: #D2B48C;
 
   --radius-xs:   6px;
   --radius-sm:   10px;
@@ -61,7 +61,7 @@ body {
 /* ─── 로딩 오버레이 ────────────────────────────────────── */
 .loader-overlay {
   position: fixed; inset: 0; z-index: 9999;
-  background: rgba(255, 240, 243, 0.88);
+  background: rgba(255, 253, 240, 0.92);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 16px; backdrop-filter: blur(4px);
@@ -103,7 +103,7 @@ body {
 /* ─── 설정 배너 ────────────────────────────────────────── */
 .config-banner {
   position: fixed; top: 64px; left: 0; right: 0; z-index: 500;
-  background: linear-gradient(90deg, #FFE0A0, #FFDAC1);
+  background: linear-gradient(90deg, #F9F1E7, #F3E5D8);
   color: var(--text-dark); text-align: center;
   padding: 10px 20px; font-size: 0.88rem; font-weight: 500;
   border-bottom: 2px solid var(--peach-dark);
@@ -290,7 +290,7 @@ body {
   font-size: 0.85rem; min-width: 900px;
 }
 .ticket-table thead th {
-  background: linear-gradient(135deg, var(--pink-light), #FFE8EE);
+  background: linear-gradient(135deg, #FFFDF0, #F9F1E7);
   color: var(--text-dark); font-weight: 700; font-size: 0.8rem;
   padding: 12px 10px; text-align: left;
   border-bottom: 2px solid var(--border-dark);
@@ -364,9 +364,9 @@ body {
 .btn-danger:hover { background: #D06060; }
 
 .btn-danger-outline {
-  background: var(--card); color: #D06060; border-color: #F0B0B0;
+  background: var(--card); color: #D06060; border-color: #EADBC8;
 }
-.btn-danger-outline:hover { background: #FFF0F0; border-color: #D06060; }
+.btn-danger-outline:hover { background: #FAF9F6; border-color: #D06060; }
 
 .btn-ghost {
   background: transparent; color: var(--text-light); border-color: transparent;

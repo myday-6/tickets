@@ -233,10 +233,10 @@ const DashboardPage = (() => {
         <td>
           ${isSale ? `
             <div class="sale-price-wrapper">
-              <input class="inline-input sale-price-input" type="number" placeholder="가격"
+              <input class="inline-input sale-price-input" type="text" inputmode="numeric" placeholder="가격"
                      data-field="salePrice" data-id="${t.id}"
                      value="${Utils.escapeHtml(current.salePrice || '')}">
-              ${(current.salePrice && (current.saleChannel === '미진티베' || current.saleChannel === '미나티베')) 
+              ${(current.salePrice && (['미진티베', '미나티베', '지넌티베'].includes(current.saleChannel))) 
                   ? `<div class="net-price">실수령: ${Math.floor(Number(current.salePrice) * 0.9).toLocaleString()}원</div>` 
                   : ''}
             </div>
@@ -342,10 +342,10 @@ const DashboardPage = (() => {
           <div class="card-field">
             <label>판매가격</label>
             <div class="sale-price-wrapper">
-              <input class="inline-input sale-price-input" type="number" placeholder="가격"
+              <input class="inline-input sale-price-input" type="text" inputmode="numeric" placeholder="가격"
                      data-field="salePrice" data-id="${t.id}"
                      value="${Utils.escapeHtml(current.salePrice || '')}">
-              ${(current.salePrice && (current.saleChannel === '미진티베' || current.saleChannel === '미나티베')) 
+              ${(current.salePrice && (['미진티베', '미나티베', '지넌티베'].includes(current.saleChannel))) 
                   ? `<div class="net-price">실수령: ${Math.floor(Number(current.salePrice) * 0.9).toLocaleString()}원</div>` 
                   : ''}
             </div>
@@ -502,11 +502,42 @@ const DashboardPage = (() => {
     }
 
     // 조건부 필드나 수수료 계산(가격, 경로 변경)이 바뀌면 전체 리프레시
-    if (['attendanceType', 'saleResult', 'saleChannel', 'salePrice'].includes(field)) {
+    // 단, salePrice는 타이핑 중 포커스 유지를 위해 수동 업데이트만 수행
+    if (['attendanceType', 'saleResult', 'saleChannel'].includes(field)) {
       refreshList();
+    } else if (field === 'salePrice') {
+      updateNetPriceDisplay(id);
+      refreshSaveBtns();
     } else {
       refreshSaveBtns();
     }
+  }
+
+  function updateNetPriceDisplay(id) {
+    const data = dirtyRows[id];
+    if (!data) return;
+    
+    // 테이블/카드 모두에서 해당 ID의 net-price 영역을 찾음
+    const containers = el().querySelectorAll(`[data-id="${id}"] .sale-price-wrapper`);
+    containers.forEach(container => {
+      let netPriceEl = container.querySelector('.net-price');
+      const isFeeTarget = ['미진티베', '미나티베', '지넌티베'].includes(data.saleChannel);
+      
+      if (data.salePrice && isFeeTarget) {
+        const netValue = Math.floor(Number(data.salePrice) * 0.9).toLocaleString();
+        const html = `실수령: ${netValue}원`;
+        if (netPriceEl) {
+          netPriceEl.textContent = html;
+        } else {
+          netPriceEl = document.createElement('div');
+          netPriceEl.className = 'net-price';
+          netPriceEl.textContent = html;
+          container.appendChild(netPriceEl);
+        }
+      } else {
+        if (netPriceEl) netPriceEl.remove();
+      }
+    });
   }
 
   function refreshSaveBtns() {
@@ -542,6 +573,12 @@ const DashboardPage = (() => {
       sel.addEventListener('change', e => onFieldChange(e.target));
     });
     el().querySelectorAll('input.inline-input').forEach(inp => {
+      // 숫자만 입력 제한 (판매가격 필드)
+      if (inp.dataset.field === 'salePrice') {
+        inp.addEventListener('input', e => {
+          e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+      }
       inp.addEventListener('input', Utils.debounce(e => onFieldChange(e.target), 300));
     });
     el().querySelectorAll('.save-row-btn').forEach(btn => {

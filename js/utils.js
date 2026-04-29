@@ -88,7 +88,7 @@ const Utils = (() => {
   // ─── 선택 옵션 ───────────────────────────────────────────
   const ID_TYPES       = ['네이버', '이메일', '기존인팍'];
   const ATTENDANCE     = ['미진', '미나', '판매'];
-  const SALE_CHANNELS  = ['미진티베', '미나티베', '번장', '트위터'];
+  const SALE_CHANNELS  = ['미진티베', '미나티베', '지넌티베', '번장', '트위터'];
   const SALE_RESULTS   = ['판매중', '판매완료'];
   const SALE_DETAILS   = ['미진티베완료', '미나티베완료', '번장', '오카'];
 
@@ -103,6 +103,7 @@ const Utils = (() => {
       saleChannel: {
         '미진티베': 'badge-mint',
         '미나티베': 'badge-blue',
+        '지넌티베': 'badge-lavender',
       },
       saleResult: {
         '판매중':   'badge-yellow',
@@ -136,7 +137,7 @@ const Utils = (() => {
   // ─── 콘서트/날짜 컬러 팔레트 ─────────────────────────────
   // 각 콘서트에 자동 배정되는 파스텔 8색 팔레트
   const CONCERT_COLOR_PALETTE = [
-    { light: '#FFF5F7', mid: '#FFE4E8', border: '#FFD1DC', text: '#D06070', emoji: '🌸' }, // 핑크
+    { light: '#FFFDFD', mid: '#FFF9FB', border: '#FFD1DC', text: '#D06070', emoji: '🌸' }, // 핑크
     { light: '#F0F9F7', mid: '#E0F2F1', border: '#B2DFDB', text: '#3E7E73', emoji: '🌿' }, // 민트
     { light: '#F5F6FB', mid: '#E8EAF6', border: '#C5CAE9', text: '#455A64', emoji: '💜' }, // 라벤더
     { light: '#FFFBF5', mid: '#FFF3E0', border: '#FFE0B2', text: '#A06040', emoji: '🍊' }, // 피치
