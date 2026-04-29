@@ -53,7 +53,7 @@ const ConcertsPage = (() => {
   function renderDateRow(date) {
     return `
       <div class="date-row" data-date-id="${date.id}">
-        <span class="date-text">📅 ${Utils.escapeHtml(date.concertDate)}</span>
+        <span class="date-text">📅 ${Utils.escapeHtml(Utils.formatShortDate(date.concertDate))}</span>
         <div class="date-actions">
           <button class="btn btn-xs btn-outline edit-date-btn" data-id="${date.id}">✏️</button>
           <button class="btn btn-xs btn-danger-outline delete-date-btn" data-id="${date.id}">🗑️</button>
@@ -254,7 +254,7 @@ const ConcertsPage = (() => {
       <div class="form-group">
         <label class="form-label" for="concert-date">공연날짜 <span class="required">*</span></label>
         <input class="form-input" id="concert-date" type="date"
-               value="${Utils.escapeHtml(dateObj.concertDate || '')}">
+               value="${Utils.escapeHtml(Utils.formatInputDate(dateObj.concertDate || ''))}">
       </div>
     `;
   }

@@ -90,7 +90,7 @@ const DashboardPage = (() => {
               ${concertDatesForFilter.map(d => {
                 const bg = colorMap.getDateBg(d.concertId, d.id);
                 return `<option value="${d.id}" ${filters.date === d.id ? 'selected' : ''}
-                  style="background:${bg};">${Utils.escapeHtml(d.concertDate)}</option>`;
+                  style="background:${bg};">${Utils.escapeHtml(Utils.formatShortDate(d.concertDate))}</option>`;
               }).join('')}
             </select>
           </div>
@@ -197,7 +197,7 @@ const DashboardPage = (() => {
         </td>
         <td class="td-nowrap">
           <span class="date-chip" style="background:${colorDef.border}22; color:${colorDef.text}; border:1px solid ${colorDef.border};">
-            ${Utils.escapeHtml(concertDate?.concertDate || '-')}
+            ${Utils.escapeHtml(Utils.formatShortDate(concertDate?.concertDate || ''))}
           </span>
         </td>
         <td>${Utils.escapeHtml(account?.accountName || '-')}</td>
@@ -284,7 +284,7 @@ const DashboardPage = (() => {
             </div>
             <div class="ticket-card-date">
               <span class="date-chip" style="background:${colorDef.border}33; color:${colorDef.text}; border:1px solid ${colorDef.border};">
-                📅 ${Utils.escapeHtml(concertDate?.concertDate || '-')}
+                📅 ${Utils.escapeHtml(Utils.formatShortDate(concertDate?.concertDate || ''))}
               </span>
             </div>
           </div>

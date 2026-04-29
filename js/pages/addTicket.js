@@ -83,7 +83,7 @@ const AddTicketPage = (() => {
     const sel    = document.getElementById('tk-date');
     if (!sel) return;
     sel.innerHTML = `<option value="">날짜 선택</option>` +
-      sorted.map(d => `<option value="${d.id}" ${d.id === selectedDateId ? 'selected' : ''}>${Utils.escapeHtml(d.concertDate)}</option>`).join('');
+      sorted.map(d => `<option value="${d.id}" ${d.id === selectedDateId ? 'selected' : ''}>${Utils.escapeHtml(Utils.formatShortDate(d.concertDate))}</option>`).join('');
   }
 
   function bindEvents() {

@@ -18,6 +18,27 @@ const Utils = (() => {
     } catch { return dateStr; }
   }
 
+  function formatShortDate(dateStr) {
+    if (!dateStr) return '-';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+    } catch { return dateStr; }
+  }
+
+  function formatInputDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    } catch { return dateStr; }
+  }
+
   function formatDateTime(dateStr) {
     if (!dateStr) return '-';
     try {
@@ -167,7 +188,7 @@ const Utils = (() => {
   }
 
   return {
-    generateId, formatDate, formatDateTime, nowISO,
+    generateId, formatDate, formatShortDate, formatInputDate, formatDateTime, nowISO,
     debounce, isEmpty, validateRequired, escapeHtml,
     buildOptions, getStatusBadgeClass, buildColorMap,
     CONCERT_COLOR_PALETTE,
