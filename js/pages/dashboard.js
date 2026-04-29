@@ -188,6 +188,9 @@ const DashboardPage = (() => {
     const account     = Store.getAccountById(t.accountId);
     const colorDef    = colorMap.getColorDef(t.concertId);
 
+    const isSale      = current.attendanceType === '판매';
+    const isCompleted = current.saleResult === '판매완료';
+    const isDirty     = !!dirtyRows[t.id];
     const concertTag = Utils.getConcertTag(t.concertId, t.concertDateId, Store.getConcertDates());
     const accountColor = Utils.getAccountColor(account?.accountName);
 
@@ -290,6 +293,9 @@ const DashboardPage = (() => {
     const current     = { ...t, ...dirty };
     const isSale      = current.attendanceType === '판매';
     const isCompleted = current.saleResult === '판매완료';
+    const isDirty     = !!dirtyRows[t.id];
+    const colorDef = colorMap.getColorDef(t.concertId);
+    const bgColor  = colorMap.getDateBg(t.concertId, t.concertDateId);
     const concertTag = Utils.getConcertTag(t.concertId, t.concertDateId, Store.getConcertDates());
     const accountColor = Utils.getAccountColor(account?.accountName);
 
