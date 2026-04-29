@@ -211,7 +211,8 @@ const DashboardPage = (() => {
           </span>
         </td>
         <td>
-          <span class="account-name" style="color:${accountColor}; font-weight:600;">
+          <span class="account-dot" style="background:${accountColor};"></span>
+          <span class="account-name">
             ${Utils.escapeHtml(account?.accountName || '-')}
           </span>
         </td>
@@ -326,7 +327,8 @@ const DashboardPage = (() => {
         </div>
 
         <div class="ticket-card-account">
-          <span class="account-name" style="color:${accountColor}; font-weight:600;">
+          <span class="account-dot" style="background:${accountColor};"></span>
+          <span class="account-name">
             ${Utils.escapeHtml(account?.accountName || '-')}
           </span>
         </div>

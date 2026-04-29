@@ -112,6 +112,10 @@ const Utils = (() => {
     const idx = dates.findIndex(d => d.id === concertDateId);
     if (idx === -1) return '';
 
+    // 하트 이모티콘 순서: ❤️🧡💛💚🩵💙💜
+    const heartEmojis = ['❤️', '🧡', '💛', '💚', '🩵', '💙', '💜', '🖤', '🤍', '🤎'];
+    const heart = heartEmojis[idx % heartEmojis.length];
+
     // 주차 구분 (공연 간격이 4일 이상이면 다음 주로 간주)
     let weeks = [];
     let currentWeek = [];
@@ -129,33 +133,37 @@ const Utils = (() => {
     }
     weeks.push(currentWeek);
 
+    let tagText = '';
     if (weeks.length === 1) {
       // 단일 주차
       if (dates.length === 2) {
-        return idx === 0 ? '[첫]' : '[막]';
+        tagText = idx === 0 ? '첫' : '막';
       } else if (dates.length === 3) {
-        if (idx === 0) return '[첫]';
-        if (idx === 1) return '[중]';
-        return '[막]';
+        if (idx === 0) tagText = '첫';
+        else if (idx === 1) tagText = '중';
+        else tagText = '막';
+      } else {
+        tagText = (idx + 1).toString();
       }
-      return `[${idx + 1}]`;
     } else {
       // 다중 주차
       const weekIdx = weeks.findIndex(w => w.some(d => d.id === concertDateId));
       const dayIdxInWeek = weeks[weekIdx].findIndex(d => d.id === concertDateId);
       
-      let weekTag = '';
-      if (weekIdx === 0) weekTag = '첫';
-      else if (weekIdx === weeks.length - 1) weekTag = '막';
-      else weekTag = (weekIdx + 1).toString();
+      let weekLabel = '';
+      if (weekIdx === 0) weekLabel = '첫';
+      else if (weekIdx === weeks.length - 1) weekLabel = '막';
+      else weekLabel = (weekIdx + 1).toString();
 
-      let dayTag = '';
-      if (dayIdxInWeek === 0) dayTag = '첫';
-      else if (dayIdxInWeek === weeks[weekIdx].length - 1) dayTag = '막';
-      else dayTag = '중';
+      let dayLabel = '';
+      if (dayIdxInWeek === 0) dayLabel = '첫';
+      else if (dayIdxInWeek === weeks[weekIdx].length - 1) dayLabel = '막';
+      else dayLabel = '중';
 
-      return `[${weekTag}${dayTag}]`;
+      tagText = `${weekLabel}${dayLabel}`;
     }
+
+    return `[${heart}${tagText}]`;
   }
 
   // ─── 선택 옵션 ───────────────────────────────────────────
