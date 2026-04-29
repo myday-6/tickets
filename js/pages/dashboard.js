@@ -161,7 +161,6 @@ const DashboardPage = (() => {
               <th>콘서트</th>
               <th>공연날짜</th>
               <th>계정</th>
-              <th>유형</th>
               <th>구역</th>
               <th>열</th>
               <th>좌석</th>
@@ -189,9 +188,8 @@ const DashboardPage = (() => {
     const account     = Store.getAccountById(t.accountId);
     const colorDef    = colorMap.getColorDef(t.concertId);
 
-    const isSale      = current.attendanceType === '판매';
-    const isCompleted = current.saleResult === '판매완료';
-    const isDirty     = !!dirtyRows[t.id];
+    const concertTag = Utils.getConcertTag(t.concertId, t.concertDateId, Store.getConcertDates());
+    const accountColor = Utils.getAccountColor(account?.accountName);
 
     // 날짜별 배경 + 콘서트별 왼쪽 테두리
     const rowStyle = isDirty
@@ -202,14 +200,18 @@ const DashboardPage = (() => {
       <tr data-id="${t.id}" class="${isDirty ? 'row-dirty' : ''}" style="${rowStyle}">
         <td class="td-concert" style="color:${colorDef.text}; font-weight:700;">
           ${Utils.escapeHtml(concert?.concertName || '-')}
+          <span class="concert-tag">${Utils.escapeHtml(concertTag)}</span>
         </td>
         <td class="td-nowrap">
           <span class="date-chip" style="background:${colorDef.border}22; color:${colorDef.text}; border:1px solid ${colorDef.border};">
             ${Utils.escapeHtml(Utils.formatShortDate(concertDate?.concertDate || ''))}
           </span>
         </td>
-        <td>${Utils.escapeHtml(account?.accountName || '-')}</td>
-        <td><span class="badge ${Utils.getStatusBadgeClass('idType', account?.idType)}">${Utils.escapeHtml(account?.idType || '-')}</span></td>
+        <td>
+          <span class="account-name" style="color:${accountColor}; font-weight:600;">
+            ${Utils.escapeHtml(account?.accountName || '-')}
+          </span>
+        </td>
         <td>${Utils.escapeHtml(current.section    || '-')}</td>
         <td>${Utils.escapeHtml(current.row        || '-')}</td>
         <td>${Utils.escapeHtml(current.seatNumber || '-')}</td>
@@ -288,10 +290,8 @@ const DashboardPage = (() => {
     const current     = { ...t, ...dirty };
     const isSale      = current.attendanceType === '판매';
     const isCompleted = current.saleResult === '판매완료';
-    const isDirty     = !!dirtyRows[t.id];
-
-    const colorDef = colorMap.getColorDef(t.concertId);
-    const bgColor  = colorMap.getDateBg(t.concertId, t.concertDateId);
+    const concertTag = Utils.getConcertTag(t.concertId, t.concertDateId, Store.getConcertDates());
+    const accountColor = Utils.getAccountColor(account?.accountName);
 
     return `
       <div class="ticket-card ${isDirty ? 'card-dirty' : ''}" data-id="${t.id}"
@@ -302,6 +302,7 @@ const DashboardPage = (() => {
           <div>
             <div class="ticket-card-concert" style="color:${colorDef.text};">
               ${Utils.escapeHtml(concert?.concertName || '-')}
+              <span class="concert-tag">${Utils.escapeHtml(concertTag)}</span>
             </div>
             <div class="ticket-card-date">
               <span class="date-chip" style="background:${colorDef.border}33; color:${colorDef.text}; border:1px solid ${colorDef.border};">
@@ -319,8 +320,9 @@ const DashboardPage = (() => {
         </div>
 
         <div class="ticket-card-account">
-          <span>${Utils.escapeHtml(account?.accountName || '-')}</span>
-          <span class="badge ${Utils.getStatusBadgeClass('idType', account?.idType)}">${Utils.escapeHtml(account?.idType || '-')}</span>
+          <span class="account-name" style="color:${accountColor}; font-weight:600;">
+            ${Utils.escapeHtml(account?.accountName || '-')}
+          </span>
         </div>
 
         <div class="ticket-card-fields" style="background:rgba(255,255,255,0.55); border-radius:10px; padding:10px;">

@@ -277,6 +277,18 @@ body {
   margin-bottom: 10px;
 }
 
+/* ─── 콘서트 태그 ──────────────────────────────────────── */
+.concert-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-left: 5px;
+  background: rgba(0,0,0,0.05);
+  padding: 1px 4px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
 
 /* ─── 테이블 ────────────────────────────────────────────── */
 .table-wrapper {

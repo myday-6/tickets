@@ -85,6 +85,79 @@ const Utils = (() => {
       .replace(/'/g, '&#039;');
   }
 
+  // ─── 계정 컬러 ──────────────────────────────────────────
+  function getAccountColor(name) {
+    if (!name) return '#999';
+    const colors = [
+      '#FF6B6B', '#4D96FF', '#6BCB77', '#FFD93D', '#6A5ACD', 
+      '#FF8AAE', '#82AAE3', '#91D8E4', '#E97777', '#B3FFAE',
+      '#F29393', '#A0C3D2', '#EAC7C7', '#C0DEFF', '#FFB3B3',
+      '#D291BC', '#957DAD', '#FEC8D8', '#FFDFD3', '#B5EAD7'
+    ];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  // ─── 콘서트 태그 ────────────────────────────────────────
+  function getConcertTag(concertId, concertDateId, allConcertDates) {
+    const dates = allConcertDates
+      .filter(d => d.concertId === concertId)
+      .sort((a, b) => a.concertDate.localeCompare(b.concertDate));
+    
+    if (dates.length <= 1) return '';
+    
+    const idx = dates.findIndex(d => d.id === concertDateId);
+    if (idx === -1) return '';
+
+    // 주차 구분 (공연 간격이 4일 이상이면 다음 주로 간주)
+    let weeks = [];
+    let currentWeek = [];
+    for (let i = 0; i < dates.length; i++) {
+      if (i > 0) {
+        const prev = new Date(dates[i-1].concertDate);
+        const curr = new Date(dates[i].concertDate);
+        const diff = (curr - prev) / (1000 * 60 * 60 * 24);
+        if (diff > 4) {
+          weeks.push(currentWeek);
+          currentWeek = [];
+        }
+      }
+      currentWeek.push(dates[i]);
+    }
+    weeks.push(currentWeek);
+
+    if (weeks.length === 1) {
+      // 단일 주차
+      if (dates.length === 2) {
+        return idx === 0 ? '[첫]' : '[막]';
+      } else if (dates.length === 3) {
+        if (idx === 0) return '[첫]';
+        if (idx === 1) return '[중]';
+        return '[막]';
+      }
+      return `[${idx + 1}]`;
+    } else {
+      // 다중 주차
+      const weekIdx = weeks.findIndex(w => w.some(d => d.id === concertDateId));
+      const dayIdxInWeek = weeks[weekIdx].findIndex(d => d.id === concertDateId);
+      
+      let weekTag = '';
+      if (weekIdx === 0) weekTag = '첫';
+      else if (weekIdx === weeks.length - 1) weekTag = '막';
+      else weekTag = (weekIdx + 1).toString();
+
+      let dayTag = '';
+      if (dayIdxInWeek === 0) dayTag = '첫';
+      else if (dayIdxInWeek === weeks[weekIdx].length - 1) dayTag = '막';
+      else dayTag = '중';
+
+      return `[${weekTag}${dayTag}]`;
+    }
+  }
+
   // ─── 선택 옵션 ───────────────────────────────────────────
   const ID_TYPES = ['네이버', '이메일', '기존인팍'];
   const ATTENDANCE = ['미진Go', '미나Go', '판매'];
@@ -193,6 +266,7 @@ const Utils = (() => {
     generateId, formatDate, formatShortDate, formatInputDate, formatDateTime, nowISO,
     debounce, isEmpty, validateRequired, escapeHtml,
     buildOptions, getStatusBadgeClass, buildColorMap,
+    getAccountColor, getConcertTag,
     CONCERT_COLOR_PALETTE,
     ID_TYPES, ATTENDANCE, SALE_CHANNELS, SALE_RESULTS, SALE_DETAILS,
   };
