@@ -202,7 +202,7 @@ const DashboardPage = (() => {
     return `
       <tr data-id="${t.id}" class="${isDirty ? 'row-dirty' : ''}" style="${rowStyle}">
         <td class="td-concert" style="color:${colorDef.text}; font-weight:700;">
-          ${Utils.escapeHtml(concert?.concertName || '-')}
+          ${Utils.getStatusIcon(current)} ${Utils.escapeHtml(concert?.concertName || '-')}
           <span class="concert-tag">${Utils.escapeHtml(concertTag)}</span>
         </td>
         <td class="td-nowrap">
@@ -308,7 +308,7 @@ const DashboardPage = (() => {
         <div class="ticket-card-header">
           <div>
             <div class="ticket-card-concert" style="color:${colorDef.text};">
-              ${Utils.escapeHtml(concert?.concertName || '-')}
+              ${Utils.getStatusIcon(current)} ${Utils.escapeHtml(concert?.concertName || '-')}
               <span class="concert-tag">${Utils.escapeHtml(concertTag)}</span>
             </div>
             <div class="ticket-card-date">

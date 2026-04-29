@@ -166,6 +166,14 @@ const Utils = (() => {
     return `[${heart}${tagText}]`;
   }
 
+  // ─── 상태 아이콘 ────────────────────────────────────────
+  function getStatusIcon(t) {
+    if (t.saleResult === '판매완료') return '✅';
+    if (['미진Go', '미나Go'].includes(t.attendanceType)) return '🎫';
+    if (t.saleResult === '판매중') return '⌛️';
+    return '';
+  }
+
   // ─── 선택 옵션 ───────────────────────────────────────────
   const ID_TYPES = ['네이버', '이메일', '기존인팍'];
   const ATTENDANCE = ['미진Go', '미나Go', '판매'];
@@ -274,7 +282,7 @@ const Utils = (() => {
     generateId, formatDate, formatShortDate, formatInputDate, formatDateTime, nowISO,
     debounce, isEmpty, validateRequired, escapeHtml,
     buildOptions, getStatusBadgeClass, buildColorMap,
-    getAccountColor, getConcertTag,
+    getAccountColor, getConcertTag, getStatusIcon,
     CONCERT_COLOR_PALETTE,
     ID_TYPES, ATTENDANCE, SALE_CHANNELS, SALE_RESULTS, SALE_DETAILS,
   };
