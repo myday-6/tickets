@@ -87,7 +87,7 @@ const Utils = (() => {
 
   // ─── 선택 옵션 ───────────────────────────────────────────
   const ID_TYPES       = ['네이버', '이메일', '기존인팍'];
-  const ATTENDANCE     = ['직접참석', '판매'];
+  const ATTENDANCE     = ['미진', '미나', '판매'];
   const SALE_CHANNELS  = ['미진티베', '미나티베', '번장', '트위터'];
   const SALE_RESULTS   = ['판매중', '판매완료'];
   const SALE_DETAILS   = ['미진티베완료', '미나티베완료', '번장', '오카'];
@@ -96,8 +96,9 @@ const Utils = (() => {
   function getStatusBadgeClass(type, value) {
     const map = {
       attendanceType: {
-        '직접참석': 'badge-lavender',
-        '판매':     'badge-peach',
+        '미진': 'badge-lavender',
+        '미나': 'badge-blue',
+        '판매': 'badge-peach',
       },
       saleChannel: {
         '미진티베': 'badge-mint',
@@ -135,14 +136,14 @@ const Utils = (() => {
   // ─── 콘서트/날짜 컬러 팔레트 ─────────────────────────────
   // 각 콘서트에 자동 배정되는 파스텔 8색 팔레트
   const CONCERT_COLOR_PALETTE = [
-    { light: '#FFF0F3', mid: '#FFD8E2', border: '#F08090', text: '#C0405A', emoji: '🌸' }, // 핑크
-    { light: '#F0FAF6', mid: '#D8F2E8', border: '#5ABDA0', text: '#1E7A60', emoji: '🌿' }, // 민트
-    { light: '#F2F4FB', mid: '#DDE2F7', border: '#7080CC', text: '#3848A0', emoji: '💜' }, // 라벤더
-    { light: '#FFF7F0', mid: '#FFE8D4', border: '#E09060', text: '#A05020', emoji: '🍊' }, // 피치
-    { light: '#FEFEF0', mid: '#FDFBD8', border: '#C0A020', text: '#806000', emoji: '⭐' }, // 옐로우
-    { light: '#F0F8FA', mid: '#D8EFF4', border: '#4090A8', text: '#1A6070', emoji: '🩵' }, // 블루
-    { light: '#FAF0FC', mid: '#F0D8F8', border: '#A060C0', text: '#703090', emoji: '🌂' }, // 퍼플
-    { light: '#F4FBF0', mid: '#E0F4D0', border: '#60A838', text: '#306820', emoji: '🌱' }, // 그린
+    { light: '#FFF5F7', mid: '#FFE4E8', border: '#FFD1DC', text: '#D06070', emoji: '🌸' }, // 핑크
+    { light: '#F0F9F7', mid: '#E0F2F1', border: '#B2DFDB', text: '#3E7E73', emoji: '🌿' }, // 민트
+    { light: '#F5F6FB', mid: '#E8EAF6', border: '#C5CAE9', text: '#455A64', emoji: '💜' }, // 라벤더
+    { light: '#FFFBF5', mid: '#FFF3E0', border: '#FFE0B2', text: '#A06040', emoji: '🍊' }, // 피치
+    { light: '#FFFDF0', mid: '#FFF9C4', border: '#FFF176', text: '#806020', emoji: '⭐' }, // 옐로우
+    { light: '#F1F9FF', mid: '#E1F5FE', border: '#B3E5FC', text: '#1A6070', emoji: '🩵' }, // 블루
+    { light: '#FAF5FD', mid: '#F3E5F5', border: '#E1BEE7', text: '#703090', emoji: '🌂' }, // 퍼플
+    { light: '#F9FBF5', mid: '#F1F8E9', border: '#DCEDC8', text: '#406020', emoji: '🌱' }, // 그린
   ];
 
   /**

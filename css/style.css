@@ -7,22 +7,22 @@
 
 /* ─── CSS 변수 ─────────────────────────────────────────── */
 :root {
-  --pink:        #FFB6C1;
-  --pink-dark:   #F08090;
-  --pink-light:  #FFE4E8;
-  --pink-xlight: #FFF0F3;
-  --mint:        #B5EAD7;
-  --mint-dark:   #7FD6B5;
-  --peach:       #FFDAC1;
-  --peach-dark:  #F5B89A;
-  --lavender:    #C7CEEA;
-  --lavender-dark: #9BA8D4;
-  --yellow:      #FFF0A0;
-  --yellow-dark: #E8D060;
-  --blue:        #AED9E0;
-  --blue-dark:   #7BB8C4;
+  --pink:        #FFD1DC;
+  --pink-dark:   #FF99AA;
+  --pink-light:  #FFF0F3;
+  --pink-xlight: #FFF5F7;
+  --mint:        #E0F2F1;
+  --mint-dark:   #80CBC4;
+  --peach:       #FFF3E0;
+  --peach-dark:  #FFCC80;
+  --lavender:    #E8EAF6;
+  --lavender-dark: #9FA8DA;
+  --yellow:      #FFF9C4;
+  --yellow-dark: #FDD835;
+  --blue:        #E1F5FE;
+  --blue-dark:   #81D4FA;
 
-  --bg:          #FFF5F7;
+  --bg:          #FFFDF5;
   --card:        #FFFFFF;
   --text:        #5C4A5A;
   --text-light:  #9B8EA0;
