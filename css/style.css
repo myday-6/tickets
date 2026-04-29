@@ -1,0 +1,483 @@
+/* ============================================================
+   style.css - 파스텔 핑크 테마 디자인 시스템
+   ============================================================ */
+
+/* ─── Google Fonts ─────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+/* ─── CSS 변수 ─────────────────────────────────────────── */
+:root {
+  --pink:        #FFB6C1;
+  --pink-dark:   #F08090;
+  --pink-light:  #FFE4E8;
+  --pink-xlight: #FFF0F3;
+  --mint:        #B5EAD7;
+  --mint-dark:   #7FD6B5;
+  --peach:       #FFDAC1;
+  --peach-dark:  #F5B89A;
+  --lavender:    #C7CEEA;
+  --lavender-dark: #9BA8D4;
+  --yellow:      #FFF0A0;
+  --yellow-dark: #E8D060;
+  --blue:        #AED9E0;
+  --blue-dark:   #7BB8C4;
+
+  --bg:          #FFF5F7;
+  --card:        #FFFFFF;
+  --text:        #5C4A5A;
+  --text-light:  #9B8EA0;
+  --text-dark:   #3D2E3A;
+  --border:      #F0D0D8;
+  --border-dark: #E0B8C4;
+
+  --radius-xs:   6px;
+  --radius-sm:   10px;
+  --radius-md:   16px;
+  --radius-lg:   24px;
+  --radius-xl:   32px;
+
+  --shadow-sm:   0 2px 8px rgba(240, 128, 144, 0.12);
+  --shadow-md:   0 4px 16px rgba(240, 128, 144, 0.18);
+  --shadow-lg:   0 8px 32px rgba(240, 128, 144, 0.22);
+  --shadow-card: 0 2px 12px rgba(200, 140, 160, 0.10);
+
+  --transition:  all 0.2s ease;
+  --font:        'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ─── 리셋 & 기본 ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 15px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ─── 로딩 오버레이 ────────────────────────────────────── */
+.loader-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(255, 240, 243, 0.88);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px; backdrop-filter: blur(4px);
+}
+.loader-spinner {
+  width: 48px; height: 48px;
+  border: 4px solid var(--pink-light);
+  border-top-color: var(--pink-dark);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+#loader-text { color: var(--pink-dark); font-weight: 500; font-size: 0.95rem; }
+.hidden { display: none !important; }
+
+/* ─── 토스트 ────────────────────────────────────────────── */
+#toast-container {
+  position: fixed; bottom: 24px; right: 24px; z-index: 8000;
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 340px;
+}
+.toast {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: var(--radius-md);
+  background: var(--card); box-shadow: var(--shadow-md);
+  border-left: 4px solid var(--pink);
+  font-size: 0.88rem; opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.25s, transform 0.25s;
+}
+.toast-show { opacity: 1; transform: translateX(0); }
+.toast-hide { opacity: 0; transform: translateX(20px); }
+.toast-success { border-left-color: var(--mint-dark); }
+.toast-error   { border-left-color: #E88080; }
+.toast-warning { border-left-color: var(--yellow-dark); }
+.toast-close { margin-left: auto; background: none; border: none; cursor: pointer; color: var(--text-light); padding: 0 4px; }
+.toast-icon  { font-size: 1.1rem; }
+
+/* ─── 설정 배너 ────────────────────────────────────────── */
+.config-banner {
+  position: fixed; top: 64px; left: 0; right: 0; z-index: 500;
+  background: linear-gradient(90deg, #FFE0A0, #FFDAC1);
+  color: var(--text-dark); text-align: center;
+  padding: 10px 20px; font-size: 0.88rem; font-weight: 500;
+  border-bottom: 2px solid var(--peach-dark);
+}
+
+/* ─── 모달 ──────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 5000;
+  background: rgba(92, 74, 90, 0.35); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal {
+  background: var(--card); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); width: 100%; max-width: 520px;
+  max-height: 90vh; overflow-y: auto;
+  animation: modalIn 0.22s ease;
+}
+@keyframes modalIn { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
+.modal-body   { padding: 20px 24px; }
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 12px 24px 20px;
+  border-top: 1px solid var(--border);
+}
+.confirm-message {
+  font-size: 0.95rem; white-space: pre-line; color: var(--text);
+  line-height: 1.8;
+}
+
+/* ─── 헤더 & 네비게이션 ─────────────────────────────────── */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--card);
+  border-bottom: 2px solid var(--pink-light);
+  box-shadow: var(--shadow-sm);
+}
+.app-header-content {
+  max-width: 1400px; margin: 0 auto;
+  padding: 0 20px;
+  display: flex; align-items: center; gap: 20px;
+  flex-wrap: wrap;
+}
+.app-title {
+  font-size: 1.15rem; font-weight: 700;
+  color: var(--pink-dark); padding: 14px 0;
+  white-space: nowrap;
+}
+.app-nav {
+  display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 0;
+}
+.nav-btn {
+  padding: 8px 16px; border-radius: var(--radius-xl);
+  border: 2px solid transparent;
+  background: var(--pink-xlight); color: var(--text);
+  font-family: var(--font); font-size: 0.88rem; font-weight: 500;
+  cursor: pointer; transition: var(--transition);
+  white-space: nowrap;
+}
+.nav-btn:hover  { background: var(--pink-light); border-color: var(--pink); }
+.nav-btn.active { background: var(--pink); border-color: var(--pink-dark); color: var(--text-dark); font-weight: 700; box-shadow: var(--shadow-sm); }
+
+/* ─── 메인 레이아웃 ─────────────────────────────────────── */
+.app-main {
+  max-width: 1400px; margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+.page { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ─── 페이지 헤더 ───────────────────────────────────────── */
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; gap: 12px; flex-wrap: wrap;
+}
+.page-title { font-size: 1.3rem; font-weight: 700; color: var(--text-dark); }
+
+/* ─── 뷰 전환 버튼 ─────────────────────────────────────── */
+.view-toggle { display: flex; gap: 4px; }
+.view-btn {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  border: 2px solid var(--border-dark); background: var(--card);
+  font-size: 1rem; cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-light);
+}
+.view-btn:hover { border-color: var(--pink); color: var(--pink-dark); }
+.view-btn.active { background: var(--pink); border-color: var(--pink-dark); color: var(--text-dark); }
+
+/* ─── 필터 바 ──────────────────────────────────────────── */
+.filter-bar {
+  background: var(--card); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  padding: 16px 20px; margin-bottom: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.filter-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.filter-group { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
+.filter-search { flex: 1; min-width: 200px; }
+.filter-label { font-size: 0.78rem; font-weight: 500; color: var(--text-light); }
+.filter-select, .filter-input {
+  padding: 7px 10px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-dark);
+  background: var(--pink-xlight); color: var(--text);
+  font-family: var(--font); font-size: 0.85rem;
+  outline: none; transition: var(--transition);
+}
+.filter-select:focus, .filter-input:focus {
+  border-color: var(--pink-dark); background: var(--card);
+  box-shadow: 0 0 0 3px rgba(240, 128, 144, 0.15);
+}
+
+/* ─── 결과 카운트 ──────────────────────────────────────── */
+.result-count {
+  font-size: 0.82rem; color: var(--text-light); font-weight: 500;
+  margin-bottom: 10px;
+}
+
+/* ─── 테이블 ────────────────────────────────────────────── */
+.table-wrapper {
+  background: var(--card); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); overflow-x: auto;
+  box-shadow: var(--shadow-card);
+}
+.ticket-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.85rem; min-width: 900px;
+}
+.ticket-table thead th {
+  background: linear-gradient(135deg, var(--pink-light), #FFE8EE);
+  color: var(--text-dark); font-weight: 700; font-size: 0.8rem;
+  padding: 12px 10px; text-align: left;
+  border-bottom: 2px solid var(--border-dark);
+  white-space: nowrap; position: sticky; top: 0; z-index: 1;
+}
+.ticket-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.ticket-table tbody tr:hover     { background: var(--pink-xlight); }
+.ticket-table tbody tr.row-dirty { background: #FFFEF0; border-left: 3px solid var(--yellow-dark); }
+.ticket-table td {
+  padding: 8px 10px; vertical-align: middle; color: var(--text);
+}
+.td-concert  { font-weight: 600; color: var(--text-dark); max-width: 140px; }
+.td-nowrap   { white-space: nowrap; }
+.td-disabled { color: var(--text-light); }
+.td-actions  { display: flex; gap: 4px; align-items: center; white-space: nowrap; }
+
+/* ─── 인라인 편집 ──────────────────────────────────────── */
+.inline-select, .inline-input {
+  padding: 5px 8px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-dark);
+  background: var(--pink-xlight); color: var(--text);
+  font-family: var(--font); font-size: 0.82rem;
+  outline: none; transition: var(--transition);
+  width: 100%; min-width: 80px;
+}
+.inline-select:focus, .inline-input:focus {
+  border-color: var(--pink-dark);
+  box-shadow: 0 0 0 2px rgba(240, 128, 144, 0.2);
+  background: var(--card);
+}
+.inline-input { min-width: 120px; }
+
+/* ─── 버튼 ──────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 9px 18px; border-radius: var(--radius-xl);
+  border: 2px solid transparent; font-family: var(--font);
+  font-size: 0.88rem; font-weight: 600; cursor: pointer;
+  transition: var(--transition); white-space: nowrap;
+  text-decoration: none;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+  color: var(--text-dark); border-color: var(--pink-dark);
+}
+.btn-primary:hover { filter: brightness(1.07); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+
+.btn-outline {
+  background: var(--card); color: var(--text);
+  border-color: var(--border-dark);
+}
+.btn-outline:hover { border-color: var(--pink); color: var(--pink-dark); background: var(--pink-xlight); }
+
+.btn-danger {
+  background: #F08888; color: #fff; border-color: #D06060;
+}
+.btn-danger:hover { background: #D06060; }
+
+.btn-danger-outline {
+  background: var(--card); color: #D06060; border-color: #F0B0B0;
+}
+.btn-danger-outline:hover { background: #FFF0F0; border-color: #D06060; }
+
+.btn-ghost {
+  background: transparent; color: var(--text-light); border-color: transparent;
+}
+.btn-ghost:hover { background: var(--pink-xlight); color: var(--text); }
+
+.btn-lg  { padding: 11px 24px; font-size: 0.95rem; }
+.btn-sm  { padding: 6px 13px; font-size: 0.82rem; }
+.btn-xs  { padding: 4px 9px;  font-size: 0.78rem; border-radius: var(--radius-sm); }
+.btn-icon { background: none; border: none; cursor: pointer; padding: 4px 8px; border-radius: var(--radius-sm); font-size: 1rem; color: var(--text-light); transition: var(--transition); }
+.btn-icon:hover { color: var(--text-dark); background: var(--pink-xlight); }
+
+/* ─── 배지 ──────────────────────────────────────────────── */
+.badge {
+  display: inline-block; padding: 3px 10px; border-radius: var(--radius-xl);
+  font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+}
+.badge-pink     { background: var(--pink-light);  color: var(--pink-dark); }
+.badge-mint     { background: var(--mint);         color: #2E8060; }
+.badge-peach    { background: var(--peach);        color: #B06030; }
+.badge-lavender { background: var(--lavender);     color: #4050A0; }
+.badge-yellow   { background: var(--yellow);       color: #806000; }
+.badge-blue     { background: var(--blue);         color: #205070; }
+.badge-gray     { background: #EEE;                color: #888; }
+
+/* ─── 카드 그리드 (계정/일반 카드) ─────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.data-card {
+  background: var(--card); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); padding: 18px 20px;
+  box-shadow: var(--shadow-card); transition: var(--transition);
+}
+.data-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--pink); }
+.data-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; }
+.data-card-title  { font-size: 1rem; font-weight: 700; color: var(--text-dark); }
+.data-card-meta   { font-size: 0.78rem; color: var(--text-light); margin-bottom: 14px; }
+.data-card-actions{ display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ─── 콘서트 카드 ──────────────────────────────────────── */
+.concert-list { display: flex; flex-direction: column; gap: 16px; }
+.concert-card {
+  background: var(--card); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+.concert-card-header      { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.concert-card-title-row   { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.concert-name             { font-size: 1.05rem; font-weight: 700; color: var(--text-dark); }
+.concert-card-actions     { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.date-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.date-row  {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--pink-xlight); border: 1px solid var(--border);
+}
+.date-text    { font-size: 0.88rem; color: var(--text); }
+.date-actions { display: flex; gap: 4px; }
+.date-empty   { font-size: 0.83rem; color: var(--text-light); font-style: italic; }
+.add-date-btn { margin-top: 4px; }
+
+/* ─── 티켓 카드 뷰 ─────────────────────────────────────── */
+.ticket-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.ticket-card {
+  background: var(--card); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); padding: 18px;
+  box-shadow: var(--shadow-card); transition: var(--transition);
+}
+.ticket-card:hover  { box-shadow: var(--shadow-md); }
+.ticket-card.card-dirty { border-color: var(--yellow-dark); background: #FEFEF5; }
+
+.ticket-card-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 10px; gap: 8px;
+}
+.ticket-card-concert { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); }
+.ticket-card-date    { font-size: 0.8rem; color: var(--text-light); margin-top: 2px; }
+.ticket-card-seat    { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.seat-section { background: var(--pink-light); color: var(--pink-dark); padding: 3px 9px; border-radius: var(--radius-xl); font-size: 0.82rem; font-weight: 600; }
+.seat-row     { font-size: 0.82rem; color: var(--text-light); }
+.seat-num     { background: var(--lavender); color: var(--lavender-dark); padding: 3px 9px; border-radius: var(--radius-xl); font-size: 0.82rem; font-weight: 600; }
+
+.ticket-card-account  { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.85rem; color: var(--text); }
+.ticket-card-fields   { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.card-field           { display: flex; flex-direction: column; gap: 3px; }
+.card-field.card-field-full { grid-column: 1 / -1; }
+.card-field label     { font-size: 0.75rem; font-weight: 500; color: var(--text-light); }
+.ticket-card-actions  { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ─── 티켓 추가 폼 ─────────────────────────────────────── */
+.add-ticket-container { max-width: 640px; margin: 0 auto; }
+.form-card {
+  background: var(--card); border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border); padding: 28px;
+  box-shadow: var(--shadow-card);
+}
+.form-group   { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-label   { font-size: 0.83rem; font-weight: 600; color: var(--text); }
+.required     { color: var(--pink-dark); }
+.form-input, .form-select {
+  padding: 10px 14px; border-radius: var(--radius-md);
+  border: 1.5px solid var(--border-dark);
+  background: var(--pink-xlight); color: var(--text);
+  font-family: var(--font); font-size: 0.9rem;
+  outline: none; transition: var(--transition);
+  width: 100%;
+}
+.form-input:focus, .form-select:focus {
+  border-color: var(--pink-dark); background: var(--card);
+  box-shadow: 0 0 0 3px rgba(240, 128, 144, 0.15);
+}
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.form-actions-row {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  margin-top: 20px; margin-bottom: 12px;
+}
+.ticket-tip {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: var(--mint); border-radius: var(--radius-sm);
+  padding: 10px 14px; font-size: 0.8rem; color: #2E6050;
+}
+.tip-icon { font-size: 1rem; flex-shrink: 0; }
+
+/* ─── 빈 상태 ──────────────────────────────────────────── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px 20px; gap: 14px; color: var(--text-light);
+}
+.empty-icon { font-size: 3rem; }
+.empty-state p { font-size: 0.95rem; }
+
+/* ─── 반응형 (모바일) ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .app-header-content { flex-direction: column; align-items: flex-start; padding: 0 14px; }
+  .app-title          { padding: 12px 0 0; font-size: 1rem; }
+  .app-nav            { width: 100%; overflow-x: auto; padding-bottom: 8px; }
+  .app-main           { padding: 16px 14px 60px; }
+
+  .page-title         { font-size: 1.1rem; }
+
+  .filter-row         { flex-direction: column; }
+  .filter-group       { min-width: unset; width: 100%; }
+
+  .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+
+  .table-wrapper      { border-radius: var(--radius-sm); }
+  .ticket-table       { font-size: 0.78rem; }
+  .ticket-table td, .ticket-table th { padding: 7px 7px; }
+
+  .ticket-cards       { grid-template-columns: 1fr; }
+  .card-grid          { grid-template-columns: 1fr; }
+
+  .modal              { border-radius: var(--radius-md); }
+  .modal-body         { padding: 16px; }
+  .modal-footer       { padding: 10px 16px 16px; }
+
+  #toast-container    { bottom: 16px; right: 14px; left: 14px; max-width: unset; }
+}
+
+@media (max-width: 480px) {
+  .form-actions-row   { flex-direction: column; }
+  .form-actions-row .btn { width: 100%; justify-content: center; }
+  .concert-card-header { flex-direction: column; }
+}
