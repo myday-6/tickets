@@ -5,7 +5,7 @@
 const DashboardPage = (() => {
   const el = () => document.getElementById('page-dashboard');
 
-  let viewMode  = 'table'; // 'table' | 'card'
+  let viewMode  = window.innerWidth <= 768 ? 'card' : 'card'; // 기본 카드뷰로 변경 (PC도 카드뷰 요청일 경우, 혹은 모바일만 카드뷰. 일단 전체 카드뷰로)
   let filters   = { concert: '', date: '', account: '', status: '', search: '' };
   let sortKey   = 'concert'; // 'concert' | 'concertDate' | 'status'
   let dirtyRows = {}; // { ticketId: patchedData }

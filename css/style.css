@@ -282,6 +282,7 @@ body {
 .table-wrapper {
   background: var(--card); border-radius: var(--radius-md);
   border: 1.5px solid var(--border); overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow-card);
 }
 .ticket-table {
