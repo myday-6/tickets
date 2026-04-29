@@ -124,6 +124,7 @@ const AddTicketPage = (() => {
         seatNumber,
         attendanceType: '',
         saleChannel: '',
+        salePrice: '',
         saleResult: '',
         saleCompletedDetail: '',
         memo: '',

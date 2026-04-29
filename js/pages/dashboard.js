@@ -10,6 +10,7 @@ const DashboardPage = (() => {
   let sortKey   = 'concert'; // 'concert' | 'concertDate' | 'status'
   let dirtyRows = {}; // { ticketId: patchedData }
   let colorMap  = null; // 콘서트/날짜 컬러 맵
+  let isFilterOpen = window.innerWidth > 768; // 모바일에서는 기본 접힘
 
   // ─── 렌더 ─────────────────────────────────────────────────
   function render() {
@@ -70,61 +71,67 @@ const DashboardPage = (() => {
       : dates;
 
     return `
-      <div class="filter-bar">
-        <div class="filter-row">
-          <div class="filter-group">
-            <label class="filter-label">콘서트</label>
-            <select class="filter-select" id="f-concert">
-              <option value="">전체</option>
-              ${concerts.map(c => {
-                const def = colorMap.getColorDef(c.id);
-                return `<option value="${c.id}" ${filters.concert === c.id ? 'selected' : ''}
-                  style="background:${def.light}; color:${def.text};">${Utils.escapeHtml(c.concertName)}</option>`;
-              }).join('')}
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="filter-label">공연날짜</label>
-            <select class="filter-select" id="f-date">
-              <option value="">전체</option>
-              ${concertDatesForFilter.map(d => {
-                const bg = colorMap.getDateBg(d.concertId, d.id);
-                return `<option value="${d.id}" ${filters.date === d.id ? 'selected' : ''}
-                  style="background:${bg};">${Utils.escapeHtml(Utils.formatShortDate(d.concertDate))}</option>`;
-              }).join('')}
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="filter-label">계정</label>
-            <select class="filter-select" id="f-account">
-              <option value="">전체</option>
-              ${accounts.map(a => `<option value="${a.id}" ${filters.account === a.id ? 'selected' : ''}>${Utils.escapeHtml(a.accountName)}</option>`).join('')}
-            </select>
-          </div>
-          <div class="filter-group">
-            <label class="filter-label">상태</label>
-            <select class="filter-select" id="f-status">
-              <option value="">전체</option>
-              ${Utils.ATTENDANCE.map(v  => `<option value="${v}" ${filters.status === v ? 'selected' : ''}>${Utils.escapeHtml(v)}</option>`).join('')}
-              ${Utils.SALE_RESULTS.map(v => `<option value="${v}" ${filters.status === v ? 'selected' : ''}>${Utils.escapeHtml(v)}</option>`).join('')}
-            </select>
-          </div>
+      <div class="filter-bar ${isFilterOpen ? 'open' : ''}">
+        <div class="filter-header" id="filter-toggle-btn">
+          <span class="filter-header-title">🔍 검색 및 필터</span>
+          <span class="filter-toggle-icon">${isFilterOpen ? '▲' : '▼'}</span>
         </div>
-        <div class="filter-row">
-          <div class="filter-group filter-search">
-            <label class="filter-label">검색</label>
-            <input class="filter-input" id="f-search" type="text" placeholder="구역, 좌석번호, 메모 검색..."
-                   value="${Utils.escapeHtml(filters.search)}">
+        <div class="filter-content" style="${isFilterOpen ? '' : 'display:none;'}">
+          <div class="filter-row">
+            <div class="filter-group">
+              <label class="filter-label">콘서트</label>
+              <select class="filter-select" id="f-concert">
+                <option value="">전체</option>
+                ${concerts.map(c => {
+                  const def = colorMap.getColorDef(c.id);
+                  return `<option value="${c.id}" ${filters.concert === c.id ? 'selected' : ''}
+                    style="background:${def.light}; color:${def.text};">${Utils.escapeHtml(c.concertName)}</option>`;
+                }).join('')}
+              </select>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">공연날짜</label>
+              <select class="filter-select" id="f-date">
+                <option value="">전체</option>
+                ${concertDatesForFilter.map(d => {
+                  const bg = colorMap.getDateBg(d.concertId, d.id);
+                  return `<option value="${d.id}" ${filters.date === d.id ? 'selected' : ''}
+                    style="background:${bg};">${Utils.escapeHtml(Utils.formatShortDate(d.concertDate))}</option>`;
+                }).join('')}
+              </select>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">계정</label>
+              <select class="filter-select" id="f-account">
+                <option value="">전체</option>
+                ${accounts.map(a => `<option value="${a.id}" ${filters.account === a.id ? 'selected' : ''}>${Utils.escapeHtml(a.accountName)}</option>`).join('')}
+              </select>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">상태</label>
+              <select class="filter-select" id="f-status">
+                <option value="">전체</option>
+                ${Utils.ATTENDANCE.map(v  => `<option value="${v}" ${filters.status === v ? 'selected' : ''}>${Utils.escapeHtml(v)}</option>`).join('')}
+                ${Utils.SALE_RESULTS.map(v => `<option value="${v}" ${filters.status === v ? 'selected' : ''}>${Utils.escapeHtml(v)}</option>`).join('')}
+              </select>
+            </div>
           </div>
-          <div class="filter-group">
-            <label class="filter-label">정렬</label>
-            <select class="filter-select" id="f-sort">
-              <option value="concert"     ${sortKey === 'concert'     ? 'selected' : ''}>콘서트별</option>
-              <option value="concertDate" ${sortKey === 'concertDate' ? 'selected' : ''}>콘서트+날짜별</option>
-              <option value="status"      ${sortKey === 'status'      ? 'selected' : ''}>상태별</option>
-            </select>
+          <div class="filter-row">
+            <div class="filter-group filter-search">
+              <label class="filter-label">검색</label>
+              <input class="filter-input" id="f-search" type="text" placeholder="구역, 좌석번호, 메모 검색..."
+                     value="${Utils.escapeHtml(filters.search)}">
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">정렬</label>
+              <select class="filter-select" id="f-sort">
+                <option value="concert"     ${sortKey === 'concert'     ? 'selected' : ''}>콘서트별</option>
+                <option value="concertDate" ${sortKey === 'concertDate' ? 'selected' : ''}>콘서트+날짜별</option>
+                <option value="status"      ${sortKey === 'status'      ? 'selected' : ''}>상태별</option>
+              </select>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="clear-filters-btn">필터 초기화</button>
           </div>
-          <button class="btn btn-ghost btn-sm" id="clear-filters-btn">필터 초기화</button>
         </div>
       </div>
     `;
@@ -160,6 +167,7 @@ const DashboardPage = (() => {
               <th>좌석</th>
               <th>상태</th>
               <th>판매경로</th>
+              <th>판매가격</th>
               <th>판매결과</th>
               <th>완료상세</th>
               <th>메모</th>
@@ -219,6 +227,19 @@ const DashboardPage = (() => {
               <option value="">-</option>
               ${Utils.buildOptions(Utils.SALE_CHANNELS, current.saleChannel)}
             </select>
+          ` : '<span class="td-disabled">-</span>'}
+        </td>
+
+        <td>
+          ${isSale ? `
+            <div class="sale-price-wrapper">
+              <input class="inline-input sale-price-input" type="number" placeholder="가격"
+                     data-field="salePrice" data-id="${t.id}"
+                     value="${Utils.escapeHtml(current.salePrice || '')}">
+              ${(current.salePrice && (current.saleChannel === '미진티베' || current.saleChannel === '미나티베')) 
+                  ? `<div class="net-price">실수령: ${Math.floor(Number(current.salePrice) * 0.9).toLocaleString()}원</div>` 
+                  : ''}
+            </div>
           ` : '<span class="td-disabled">-</span>'}
         </td>
 
@@ -319,6 +340,17 @@ const DashboardPage = (() => {
             </select>
           </div>
           <div class="card-field">
+            <label>판매가격</label>
+            <div class="sale-price-wrapper">
+              <input class="inline-input sale-price-input" type="number" placeholder="가격"
+                     data-field="salePrice" data-id="${t.id}"
+                     value="${Utils.escapeHtml(current.salePrice || '')}">
+              ${(current.salePrice && (current.saleChannel === '미진티베' || current.saleChannel === '미나티베')) 
+                  ? `<div class="net-price">실수령: ${Math.floor(Number(current.salePrice) * 0.9).toLocaleString()}원</div>` 
+                  : ''}
+            </div>
+          </div>
+          <div class="card-field">
             <label>판매결과</label>
             <select class="inline-select" data-field="saleResult" data-id="${t.id}">
               <option value="">-</option>
@@ -404,6 +436,11 @@ const DashboardPage = (() => {
       document.getElementById('view-table-btn')?.classList.remove('active');
     });
 
+    document.getElementById('filter-toggle-btn')?.addEventListener('click', () => {
+      isFilterOpen = !isFilterOpen;
+      render();
+    });
+
     document.getElementById('f-concert')?.addEventListener('change', e => {
       filters.concert = e.target.value;
       filters.date    = '';
@@ -464,8 +501,8 @@ const DashboardPage = (() => {
       dirtyRows[id].saleCompletedDetail = '';
     }
 
-    // 조건부 필드가 바뀌면 전체 리프레시 (드롭다운 show/hide)
-    if (['attendanceType', 'saleResult'].includes(field)) {
+    // 조건부 필드나 수수료 계산(가격, 경로 변경)이 바뀌면 전체 리프레시
+    if (['attendanceType', 'saleResult', 'saleChannel', 'salePrice'].includes(field)) {
       refreshList();
     } else {
       refreshSaveBtns();
@@ -544,7 +581,7 @@ const DashboardPage = (() => {
     const msg = [
       `아래 티켓을 삭제하시겠습니까?`,
       `콘서트: ${concert?.concertName || '-'}`,
-      `날짜: ${concertDate?.concertDate || '-'}`,
+      `날짜: ${Utils.formatShortDate(concertDate?.concertDate || '')}`,
       `계정: ${account?.accountName || '-'} / 구역: ${ticket.section} ${ticket.row}열 ${ticket.seatNumber}번`,
     ].join('\n');
 

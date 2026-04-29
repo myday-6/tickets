@@ -22,7 +22,7 @@ var SHEET_HEADERS = {
   Tickets: [
     'id', 'accountId', 'concertId', 'concertDateId',
     'section', 'row', 'seatNumber',
-    'attendanceType', 'saleChannel', 'saleResult', 'saleCompletedDetail',
+    'attendanceType', 'saleChannel', 'salePrice', 'saleResult', 'saleCompletedDetail',
     'memo', 'createdAt', 'updatedAt'
   ]
 };

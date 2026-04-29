@@ -203,9 +203,21 @@ body {
 .filter-bar {
   background: var(--card); border-radius: var(--radius-md);
   border: 1.5px solid var(--border);
-  padding: 16px 20px; margin-bottom: 20px;
+  padding: 0; margin-bottom: 20px;
   box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.filter-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; cursor: pointer; user-select: none;
+  background: var(--pink-xlight);
+}
+.filter-header-title { font-size: 0.9rem; font-weight: 700; color: var(--text-dark); }
+.filter-toggle-icon { font-size: 0.8rem; color: var(--pink-dark); transition: transform 0.2s; }
+.filter-content {
+  padding: 16px 20px;
   display: flex; flex-direction: column; gap: 10px;
+  border-top: 1px solid var(--border);
 }
 .filter-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
 .filter-group { display: flex; flex-direction: column; gap: 4px; min-width: 120px; }
@@ -313,6 +325,14 @@ body {
   background: var(--card);
 }
 .inline-input { min-width: 120px; }
+
+.sale-price-wrapper { display: flex; flex-direction: column; gap: 4px; }
+.sale-price-input { max-width: 90px; min-width: 80px; }
+.net-price {
+  font-size: 0.75rem; font-weight: 600; color: var(--pink-dark);
+  background: var(--pink-xlight); padding: 2px 6px; border-radius: 4px;
+  display: inline-block; white-space: nowrap; align-self: flex-start;
+}
 
 /* ─── 버튼 ──────────────────────────────────────────────── */
 .btn {
