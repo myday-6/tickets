@@ -1,162 +1,177 @@
 /* ============================================================
-   utils.js - Utility Functions
+   utils.js - 유틸리티 함수 모음
    ============================================================ */
 
 const Utils = (() => {
-     // --- ID Generation ---
-                 function generateId() {
-                        return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-                 }
+  // ─── ID 생성 ─────────────────────────────────────────────
+  function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
 
-                 // --- Date Format ---
-                 function formatDate(dateStr) {
-                        if (!dateStr) return '-';
-                        try {
-                                 const d = new Date(dateStr);
-                                 if (isNaN(d)) return dateStr;
-                                 return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-                        } catch { return dateStr; }
-                 }
+  // ─── 날짜 포맷 ───────────────────────────────────────────
+  function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    } catch { return dateStr; }
+  }
 
-                 function formatDateTime(dateStr) {
-                        if (!dateStr) return '-';
-                        try {
-                                 const d = new Date(dateStr);
-                                 if (isNaN(d)) return dateStr;
-                                 return d.toLocaleString('ko-KR', {
-                                            year: 'numeric', month: '2-digit', day: '2-digit',
-                                            hour: '2-digit', minute: '2-digit'
-                                 });
-                        } catch { return dateStr; }
-                 }
+  function formatDateTime(dateStr) {
+    if (!dateStr) return '-';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      return d.toLocaleString('ko-KR', {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit'
+      });
+    } catch { return dateStr; }
+  }
 
-                 function nowISO() {
-                        return new Date().toISOString();
-                 }
+  function nowISO() {
+    return new Date().toISOString();
+  }
 
-                 // --- Debounce ---
-                 function debounce(fn, delay) {
-                        let timer;
-                        return function (...args) {
-                                 clearTimeout(timer);
-                                 timer = setTimeout(() => fn.apply(this, args), delay);
-                        };
-                 }
-     // --- Validation ---
-                 function isEmpty(val) {
-                        return val === null || val === undefined || String(val).trim() === '';
-                 }
+  // ─── 디바운스 ─────────────────────────────────────────────
+  function debounce(fn, delay) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
 
-                 function validateRequired(obj, fields) {
-                        const missing = fields.filter(f => isEmpty(obj[f]));
-                        return missing;
-                 }
+  // ─── 빈값 검증 ───────────────────────────────────────────
+  function isEmpty(val) {
+    return val === null || val === undefined || String(val).trim() === '';
+  }
 
-                 // --- HTML Escape ---
-                 function escapeHtml(str) {
-                        if (!str) return '';
-                        return String(str)
-                          .replace(/&/g, '&amp;')
-                          .replace(/</g, '&lt;')
-                          .replace(/>/g, '&gt;')
-                          .replace(/"/g, '&quot;')
-                          .replace(/'/g, '&#039;');
-                 }
+  function validateRequired(obj, fields) {
+    const missing = fields.filter(f => isEmpty(obj[f]));
+    return missing;
+  }
 
-                 // --- Options ---
-                 const ID_TYPES       = ['\ub124\uc774\ubc84', '\uc774\uba54\uc77c', '\uae30\uc874\uc778\ud30d'];
-     const ATTENDANCE     = ['\uc9c1\uc811\ucc38\uc11d', '\ud310\ub9e4'];
-     const SALE_CHANNELS  = ['\ubbf8\uc9c4\ud2f0\ubca0', '\ubbf8\ub098\ud2f0\ubca0'];
-     const SALE_RESULTS   = ['\ud310\ub9e4\uc911', '\ud310\ub9e4\uc644\ub8cc'];
-     const SALE_DETAILS   = ['\ubbf8\uc9c4\ud2f0\ubca0\uc644\ub8cc', '\ubbf8\ub098\ud2f0\ubca0\uc644\ub8cc', '\ubc88\uc7a5', '\uc624\uce74'];
+  // ─── HTML 이스케이프 ──────────────────────────────────────
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
-                 // --- Badge Class ---
-                 function getStatusBadgeClass(type, value) {
-                        const map = {
-                                 attendanceType: {
-                                            '\uc9c1\uc811\ucc38\uc11d': 'badge-lavender',
-                                            '\ud310\ub9e4':     'badge-peach',
-                                 },
-                                 saleChannel: {
-                                            '\ubbf8\uc9c4\ud2f0\ubca0': 'badge-mint',
-                                            '\ubbf8\ub098\ud2f0\ubca0': 'badge-blue',
-                                 },
-                                 saleResult: {
-                                            '\ud310\ub9e4\uc911':   'badge-yellow',
-                                            '\ud310\ub9e4\uc644\ub8cc': 'badge-pink',
-                                 },
-                                 saleCompletedDetail: {
-                                            '\ubbf8\uc9c4\ud2f0\ubca0\uc644\ub8cc': 'badge-pink',
-                                            '\ubbf8\ub098\ud2f0\ubca0\uc644\ub8cc': 'badge-mint',
-                                            '\ubc88\uc7a5':         'badge-lavender',
-                                            '\uc624\uce74':         'badge-peach',
-                                 },
-                                 idType: {
-                                            '\ub124\uc774\ubc84':   'badge-mint',
-                                            '\uc774\uba54\uc77c':   'badge-blue',
-                                            '\uae30\uc874\uc778\ud30d': 'badge-peach',
-                                 },
-                        };
-                        return (map[type] && map[type][value]) ? map[type][value] : 'badge-gray';
-                 }
-     // --- Select Options ---
-                 function buildOptions(options, selectedValue, placeholder = '') {
-                        let html = placeholder ? `<option value="">${escapeHtml(placeholder)}</option>` : '';
-                        options.forEach(opt => {
-                                 const sel = opt === selectedValue ? ' selected' : '';
-                                 html += `<option value="${escapeHtml(opt)}"${sel}>${escapeHtml(opt)}</option>`;
-                        });
-                        return html;
-                 }
+  // ─── 선택 옵션 ───────────────────────────────────────────
+  const ID_TYPES       = ['네이버', '이메일', '기존인팍'];
+  const ATTENDANCE     = ['직접참석', '판매'];
+  const SALE_CHANNELS  = ['미진티베', '미나티베'];
+  const SALE_RESULTS   = ['판매중', '판매완료'];
+  const SALE_DETAILS   = ['미진티베완료', '미나티베완료', '번장', '오카'];
 
-                 // --- Color Palette ---
-                 const CONCERT_COLOR_PALETTE = [
-                    { light: '#FFF0F3', mid: '#FFD8E2', border: '#F08090', text: '#C0405A', emoji: '\ud83c\udf38' },
-                    { light: '#F0FAF6', mid: '#D8F2E8', border: '#5ABDA0', text: '#1E7A60', emoji: '\ud83c\udf3f' },
-                    { light: '#F2F4FB', mid: '#DDE2F7', border: '#7080CC', text: '#3848A0', emoji: '\ud83d\udc9c' },
-                    { light: '#FFF7F0', mid: '#FFE8D4', border: '#E09060', text: '#A05020', emoji: '\ud83c\udf4a' },
-                    { light: '#FEFEF0', mid: '#FDFBD8', border: '#C0A020', text: '#806000', emoji: '\u2b50' },
-                    { light: '#F0F8FA', mid: '#D8EFF4', border: '#4090A8', text: '#1A6070', emoji: '\ud83e\ude75' },
-                    { light: '#FAF0FC', mid: '#F0D8F8', border: '#A060C0', text: '#703090', emoji: '\ud83c\udf02' },
-                    { light: '#F4FBF0', mid: '#E0F4D0', border: '#60A838', text: '#306820', emoji: '\ud83c\udf31' },
-                      ];
+  // ─── 상태 배지 색상 ───────────────────────────────────────
+  function getStatusBadgeClass(type, value) {
+    const map = {
+      attendanceType: {
+        '직접참석': 'badge-lavender',
+        '판매':     'badge-peach',
+      },
+      saleChannel: {
+        '미진티베': 'badge-mint',
+        '미나티베': 'badge-blue',
+      },
+      saleResult: {
+        '판매중':   'badge-yellow',
+        '판매완료': 'badge-pink',
+      },
+      saleCompletedDetail: {
+        '미진티베완료': 'badge-pink',
+        '미나티베완료': 'badge-mint',
+        '번장':         'badge-lavender',
+        '오카':         'badge-peach',
+      },
+      idType: {
+        '네이버':   'badge-mint',
+        '이메일':   'badge-blue',
+        '기존인팍': 'badge-peach',
+      },
+    };
+    return (map[type] && map[type][value]) ? map[type][value] : 'badge-gray';
+  }
 
-                 function buildColorMap(concerts, dates) {
-                        const concertIdx = {};
-                        concerts.forEach((c, i) => { concertIdx[c.id] = i % CONCERT_COLOR_PALETTE.length; });
+  // ─── select 옵션 HTML 생성 ────────────────────────────────
+  function buildOptions(options, selectedValue, placeholder = '') {
+    let html = placeholder ? `<option value="">${escapeHtml(placeholder)}</option>` : '';
+    options.forEach(opt => {
+      const sel = opt === selectedValue ? ' selected' : '';
+      html += `<option value="${escapeHtml(opt)}"${sel}>${escapeHtml(opt)}</option>`;
+    });
+    return html;
+  }
 
-       const dateShade = {};
-                        concerts.forEach(c => {
-                                 const sorted = [...dates]
-                                   .filter(d => d.concertId === c.id)
-                                   .sort((a, b) => a.concertDate.localeCompare(b.concertDate));
-                                 sorted.forEach((d, i) => { dateShade[d.id] = i % 2; });
-                        });
+  // ─── 콘서트/날짜 컬러 팔레트 ─────────────────────────────
+  // 각 콘서트에 자동 배정되는 파스텔 8색 팔레트
+  const CONCERT_COLOR_PALETTE = [
+    { light: '#FFF0F3', mid: '#FFD8E2', border: '#F08090', text: '#C0405A', emoji: '🌸' }, // 핑크
+    { light: '#F0FAF6', mid: '#D8F2E8', border: '#5ABDA0', text: '#1E7A60', emoji: '🌿' }, // 민트
+    { light: '#F2F4FB', mid: '#DDE2F7', border: '#7080CC', text: '#3848A0', emoji: '💜' }, // 라벤더
+    { light: '#FFF7F0', mid: '#FFE8D4', border: '#E09060', text: '#A05020', emoji: '🍊' }, // 피치
+    { light: '#FEFEF0', mid: '#FDFBD8', border: '#C0A020', text: '#806000', emoji: '⭐' }, // 옐로우
+    { light: '#F0F8FA', mid: '#D8EFF4', border: '#4090A8', text: '#1A6070', emoji: '🩵' }, // 블루
+    { light: '#FAF0FC', mid: '#F0D8F8', border: '#A060C0', text: '#703090', emoji: '🌂' }, // 퍼플
+    { light: '#F4FBF0', mid: '#E0F4D0', border: '#60A838', text: '#306820', emoji: '🌱' }, // 그린
+  ];
 
-       function getColorDef(concertId) {
-                return CONCERT_COLOR_PALETTE[concertIdx[concertId] ?? 0];
-       }
+  /**
+   * 콘서트/날짜별 색상 매핑 빌드
+   * @param {Array} concerts - 전체 콘서트 목록
+   * @param {Array} dates    - 전체 공연날짜 목록
+   * @returns {{ getConcertStyle, getDateBg, getColorDef }}
+   */
+  function buildColorMap(concerts, dates) {
+    // 콘서트 ID → 팔레트 인덱스
+    const concertIdx = {};
+    concerts.forEach((c, i) => { concertIdx[c.id] = i % CONCERT_COLOR_PALETTE.length; });
 
-       function getDateBg(concertId, concertDateId) {
-                const def   = getColorDef(concertId);
-                const shade = dateShade[concertDateId] ?? 0;
-                return shade === 0 ? def.light : def.mid;
-       }
+    // 날짜 ID → 동일 콘서트 내 순번 (0, 1, 0, 1 …)
+    const dateShade = {};
+    concerts.forEach(c => {
+      const sorted = [...dates]
+        .filter(d => d.concertId === c.id)
+        .sort((a, b) => a.concertDate.localeCompare(b.concertDate));
+      sorted.forEach((d, i) => { dateShade[d.id] = i % 2; });
+    });
 
-       function getConcertStyle(concertId, concertDateId) {
-                const def = getColorDef(concertId);
-                const bg  = getDateBg(concertId, concertDateId);
-                return `border-left: 4px solid ${def.border}; background: ${bg};`;
-       }
+    // 콘서트 색상 정의 반환
+    function getColorDef(concertId) {
+      return CONCERT_COLOR_PALETTE[concertIdx[concertId] ?? 0];
+    }
 
-       return { getColorDef, getDateBg, getConcertStyle };
-                 }
+    // 테이블 행 / 카드 배경색 (날짜 shade 반영)
+    function getDateBg(concertId, concertDateId) {
+      const def   = getColorDef(concertId);
+      const shade = dateShade[concertDateId] ?? 0;
+      return shade === 0 ? def.light : def.mid;
+    }
 
-                 return {
-                        generateId, formatDate, formatDateTime, nowISO,
-                        debounce, isEmpty, validateRequired, escapeHtml,
-                        buildOptions, getStatusBadgeClass, buildColorMap,
-                        CONCERT_COLOR_PALETTE,
-                        ID_TYPES, ATTENDANCE, SALE_CHANNELS, SALE_RESULTS, SALE_DETAILS,
-                 };
+    // 테이블 행 인라인 스타일 문자열
+    function getConcertStyle(concertId, concertDateId) {
+      const def = getColorDef(concertId);
+      const bg  = getDateBg(concertId, concertDateId);
+      return `border-left: 4px solid ${def.border}; background: ${bg};`;
+    }
+
+    return { getColorDef, getDateBg, getConcertStyle };
+  }
+
+  return {
+    generateId, formatDate, formatDateTime, nowISO,
+    debounce, isEmpty, validateRequired, escapeHtml,
+    buildOptions, getStatusBadgeClass, buildColorMap,
+    CONCERT_COLOR_PALETTE,
+    ID_TYPES, ATTENDANCE, SALE_CHANNELS, SALE_RESULTS, SALE_DETAILS,
+  };
 })();
+

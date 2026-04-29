@@ -223,11 +223,48 @@ body {
   box-shadow: 0 0 0 3px rgba(240, 128, 144, 0.15);
 }
 
+/* ─── 콘서트 컬러 범례 ──────────────────────────────────── */
+.concert-legend {
+  background: var(--card); border-radius: var(--radius-md);
+  border: 1.5px solid var(--border); padding: 12px 16px;
+  margin-bottom: 14px; display: flex; align-items: flex-start;
+  gap: 12px; flex-wrap: wrap; box-shadow: var(--shadow-card);
+}
+.legend-label {
+  font-size: 0.78rem; font-weight: 700; color: var(--text-light);
+  white-space: nowrap; align-self: center;
+}
+.legend-items { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+.legend-item {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px 4px 8px; border-radius: var(--radius-xl);
+  font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+  border-left-width: 3px; border-left-style: solid;
+  transition: var(--transition);
+}
+.legend-item:hover { filter: brightness(0.94); }
+.legend-dot {
+  display: inline-block; width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.legend-hint {
+  font-size: 0.72rem; color: var(--text-light); align-self: flex-end;
+  white-space: nowrap; font-style: italic;
+}
+
+/* ─── 날짜 칩 (테이블/카드 공용) ───────────────────────── */
+.date-chip {
+  display: inline-block; padding: 2px 8px;
+  border-radius: var(--radius-xl); font-size: 0.78rem; font-weight: 600;
+  white-space: nowrap;
+}
+
 /* ─── 결과 카운트 ──────────────────────────────────────── */
 .result-count {
   font-size: 0.82rem; color: var(--text-light); font-weight: 500;
   margin-bottom: 10px;
 }
+
 
 /* ─── 테이블 ────────────────────────────────────────────── */
 .table-wrapper {
@@ -248,14 +285,15 @@ body {
 }
 .ticket-table tbody tr {
   border-bottom: 1px solid var(--border);
-  transition: background 0.15s;
+  transition: filter 0.15s;
 }
-.ticket-table tbody tr:hover     { background: var(--pink-xlight); }
-.ticket-table tbody tr.row-dirty { background: #FFFEF0; border-left: 3px solid var(--yellow-dark); }
+/* hover는 background 대신 filter로 → 인라인 컬러 배경 유지 */
+.ticket-table tbody tr:hover     { filter: brightness(0.96); }
+.ticket-table tbody tr.row-dirty { outline: 2px solid var(--yellow-dark); outline-offset: -2px; }
 .ticket-table td {
   padding: 8px 10px; vertical-align: middle; color: var(--text);
 }
-.td-concert  { font-weight: 600; color: var(--text-dark); max-width: 140px; }
+.td-concert  { font-weight: 700; max-width: 140px; }
 .td-nowrap   { white-space: nowrap; }
 .td-disabled { color: var(--text-light); }
 .td-actions  { display: flex; gap: 4px; align-items: center; white-space: nowrap; }
@@ -380,12 +418,12 @@ body {
   gap: 16px;
 }
 .ticket-card {
-  background: var(--card); border-radius: var(--radius-md);
+  border-radius: var(--radius-md);
   border: 1.5px solid var(--border); padding: 18px;
-  box-shadow: var(--shadow-card); transition: var(--transition);
+  box-shadow: var(--shadow-card); transition: box-shadow 0.2s, filter 0.2s;
 }
-.ticket-card:hover  { box-shadow: var(--shadow-md); }
-.ticket-card.card-dirty { border-color: var(--yellow-dark); background: #FEFEF5; }
+.ticket-card:hover      { box-shadow: var(--shadow-md); filter: brightness(0.97); }
+.ticket-card.card-dirty { outline: 2px solid var(--yellow-dark); outline-offset: -2px; }
 
 .ticket-card-header {
   display: flex; justify-content: space-between; align-items: flex-start;
@@ -474,6 +512,11 @@ body {
   .modal-footer       { padding: 10px 16px 16px; }
 
   #toast-container    { bottom: 16px; right: 14px; left: 14px; max-width: unset; }
+
+  /* 범례 모바일 */
+  .concert-legend     { padding: 10px 12px; gap: 8px; }
+  .legend-hint        { display: none; }
+  .legend-item        { font-size: 0.72rem; padding: 3px 8px 3px 6px; }
 }
 
 @media (max-width: 480px) {

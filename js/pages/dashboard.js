@@ -9,18 +9,23 @@ const DashboardPage = (() => {
   let filters   = { concert: '', date: '', account: '', status: '', search: '' };
   let sortKey   = 'concert'; // 'concert' | 'concertDate' | 'status'
   let dirtyRows = {}; // { ticketId: patchedData }
+  let colorMap  = null; // 콘서트/날짜 컬러 맵
 
   // ─── 렌더 ─────────────────────────────────────────────────
   function render() {
+    // 컬러 맵 매 렌더마다 재빌드 (콘서트 추가/변경 반영)
+    colorMap = Utils.buildColorMap(Store.getConcerts(), Store.getConcertDates());
+
     el().innerHTML = `
       <div class="page-header">
         <h2 class="page-title">📋 티켓 리스트</h2>
         <div class="view-toggle">
           <button class="view-btn ${viewMode === 'table' ? 'active' : ''}" id="view-table-btn" title="테이블 보기">☰</button>
-          <button class="view-btn ${viewMode === 'card' ? 'active' : ''}" id="view-card-btn" title="카드 보기">⊞</button>
+          <button class="view-btn ${viewMode === 'card'  ? 'active' : ''}" id="view-card-btn"  title="카드 보기">⊞</button>
         </div>
       </div>
 
+      ${renderColorLegend()}
       ${renderFilterBar()}
 
       <div id="ticket-list-area">
@@ -30,6 +35,31 @@ const DashboardPage = (() => {
     bindEvents();
   }
 
+  // ─── 컬러 범례 ────────────────────────────────────────────
+  function renderColorLegend() {
+    const concerts = Store.getConcerts();
+    if (concerts.length === 0) return '';
+
+    const items = concerts.map(c => {
+      const def = colorMap.getColorDef(c.id);
+      return `
+        <span class="legend-item" style="border-left: 3px solid ${def.border}; background: ${def.light}; color: ${def.text};">
+          <span class="legend-dot" style="background:${def.border};"></span>
+          ${Utils.escapeHtml(c.concertName)}
+        </span>
+      `;
+    }).join('');
+
+    return `
+      <div class="concert-legend">
+        <span class="legend-label">🎨 콘서트별 색상</span>
+        <div class="legend-items">${items}</div>
+        <span class="legend-hint">※ 같은 콘서트 내 밝은/진한 배경 = 날짜 구분</span>
+      </div>
+    `;
+  }
+
+  // ─── 필터 바 ──────────────────────────────────────────────
   function renderFilterBar() {
     const concerts = Store.getConcerts();
     const dates    = Store.getConcertDates();
@@ -46,14 +76,22 @@ const DashboardPage = (() => {
             <label class="filter-label">콘서트</label>
             <select class="filter-select" id="f-concert">
               <option value="">전체</option>
-              ${concerts.map(c => `<option value="${c.id}" ${filters.concert === c.id ? 'selected' : ''}>${Utils.escapeHtml(c.concertName)}</option>`).join('')}
+              ${concerts.map(c => {
+                const def = colorMap.getColorDef(c.id);
+                return `<option value="${c.id}" ${filters.concert === c.id ? 'selected' : ''}
+                  style="background:${def.light}; color:${def.text};">${Utils.escapeHtml(c.concertName)}</option>`;
+              }).join('')}
             </select>
           </div>
           <div class="filter-group">
             <label class="filter-label">공연날짜</label>
             <select class="filter-select" id="f-date">
               <option value="">전체</option>
-              ${concertDatesForFilter.map(d => `<option value="${d.id}" ${filters.date === d.id ? 'selected' : ''}>${Utils.escapeHtml(d.concertDate)}</option>`).join('')}
+              ${concertDatesForFilter.map(d => {
+                const bg = colorMap.getDateBg(d.concertId, d.id);
+                return `<option value="${d.id}" ${filters.date === d.id ? 'selected' : ''}
+                  style="background:${bg};">${Utils.escapeHtml(d.concertDate)}</option>`;
+              }).join('')}
             </select>
           </div>
           <div class="filter-group">
@@ -67,7 +105,7 @@ const DashboardPage = (() => {
             <label class="filter-label">상태</label>
             <select class="filter-select" id="f-status">
               <option value="">전체</option>
-              ${Utils.ATTENDANCE.map(v => `<option value="${v}" ${filters.status === v ? 'selected' : ''}>${Utils.escapeHtml(v)}</option>`).join('')}
+              ${Utils.ATTENDANCE.map(v  => `<option value="${v}" ${filters.status === v ? 'selected' : ''}>${Utils.escapeHtml(v)}</option>`).join('')}
               ${Utils.SALE_RESULTS.map(v => `<option value="${v}" ${filters.status === v ? 'selected' : ''}>${Utils.escapeHtml(v)}</option>`).join('')}
             </select>
           </div>
@@ -100,7 +138,6 @@ const DashboardPage = (() => {
     }
 
     const countBadge = `<div class="result-count">${tickets.length}건</div>`;
-
     return viewMode === 'table'
       ? countBadge + renderTable(tickets)
       : countBadge + renderCards(tickets);
@@ -139,22 +176,34 @@ const DashboardPage = (() => {
     const dirty   = dirtyRows[t.id] || {};
     const current = { ...t, ...dirty };
 
-    const concert    = Store.getConcertById(t.concertId);
+    const concert     = Store.getConcertById(t.concertId);
     const concertDate = Store.getConcertDateById(t.concertDateId);
-    const account    = Store.getAccountById(t.accountId);
+    const account     = Store.getAccountById(t.accountId);
+    const colorDef    = colorMap.getColorDef(t.concertId);
 
-    const isSale    = current.attendanceType === '판매';
+    const isSale      = current.attendanceType === '판매';
     const isCompleted = current.saleResult === '판매완료';
-    const isDirty   = !!dirtyRows[t.id];
+    const isDirty     = !!dirtyRows[t.id];
+
+    // 날짜별 배경 + 콘서트별 왼쪽 테두리
+    const rowStyle = isDirty
+      ? `border-left: 4px solid ${colorDef.border};`
+      : colorMap.getConcertStyle(t.concertId, t.concertDateId);
 
     return `
-      <tr data-id="${t.id}" class="${isDirty ? 'row-dirty' : ''}">
-        <td class="td-concert">${Utils.escapeHtml(concert?.concertName || '-')}</td>
-        <td class="td-nowrap">${Utils.escapeHtml(concertDate?.concertDate || '-')}</td>
+      <tr data-id="${t.id}" class="${isDirty ? 'row-dirty' : ''}" style="${rowStyle}">
+        <td class="td-concert" style="color:${colorDef.text}; font-weight:700;">
+          ${Utils.escapeHtml(concert?.concertName || '-')}
+        </td>
+        <td class="td-nowrap">
+          <span class="date-chip" style="background:${colorDef.border}22; color:${colorDef.text}; border:1px solid ${colorDef.border};">
+            ${Utils.escapeHtml(concertDate?.concertDate || '-')}
+          </span>
+        </td>
         <td>${Utils.escapeHtml(account?.accountName || '-')}</td>
         <td><span class="badge ${Utils.getStatusBadgeClass('idType', account?.idType)}">${Utils.escapeHtml(account?.idType || '-')}</span></td>
-        <td>${Utils.escapeHtml(current.section || '-')}</td>
-        <td>${Utils.escapeHtml(current.row || '-')}</td>
+        <td>${Utils.escapeHtml(current.section    || '-')}</td>
+        <td>${Utils.escapeHtml(current.row        || '-')}</td>
         <td>${Utils.escapeHtml(current.seatNumber || '-')}</td>
 
         <td>
@@ -220,15 +269,29 @@ const DashboardPage = (() => {
     const isCompleted = current.saleResult === '판매완료';
     const isDirty     = !!dirtyRows[t.id];
 
+    const colorDef = colorMap.getColorDef(t.concertId);
+    const bgColor  = colorMap.getDateBg(t.concertId, t.concertDateId);
+
     return `
-      <div class="ticket-card ${isDirty ? 'card-dirty' : ''}" data-id="${t.id}">
+      <div class="ticket-card ${isDirty ? 'card-dirty' : ''}" data-id="${t.id}"
+           style="border-top: 4px solid ${colorDef.border}; background: ${bgColor};">
+
+        <!-- 콘서트 + 날짜 헤더 -->
         <div class="ticket-card-header">
           <div>
-            <div class="ticket-card-concert">${Utils.escapeHtml(concert?.concertName || '-')}</div>
-            <div class="ticket-card-date">📅 ${Utils.escapeHtml(concertDate?.concertDate || '-')}</div>
+            <div class="ticket-card-concert" style="color:${colorDef.text};">
+              ${Utils.escapeHtml(concert?.concertName || '-')}
+            </div>
+            <div class="ticket-card-date">
+              <span class="date-chip" style="background:${colorDef.border}33; color:${colorDef.text}; border:1px solid ${colorDef.border};">
+                📅 ${Utils.escapeHtml(concertDate?.concertDate || '-')}
+              </span>
+            </div>
           </div>
           <div class="ticket-card-seat">
-            <span class="seat-section">${Utils.escapeHtml(current.section || '-')}</span>
+            <span class="seat-section" style="background:${colorDef.border}44; color:${colorDef.text};">
+              ${Utils.escapeHtml(current.section || '-')}
+            </span>
             ${current.row ? `<span class="seat-row">${Utils.escapeHtml(current.row)}열</span>` : ''}
             <span class="seat-num">${Utils.escapeHtml(current.seatNumber || '-')}번</span>
           </div>
@@ -239,7 +302,7 @@ const DashboardPage = (() => {
           <span class="badge ${Utils.getStatusBadgeClass('idType', account?.idType)}">${Utils.escapeHtml(account?.idType || '-')}</span>
         </div>
 
-        <div class="ticket-card-fields">
+        <div class="ticket-card-fields" style="background:rgba(255,255,255,0.55); border-radius:10px; padding:10px;">
           <div class="card-field">
             <label>상태</label>
             <select class="inline-select" data-field="attendanceType" data-id="${t.id}">
@@ -304,10 +367,10 @@ const DashboardPage = (() => {
     if (filters.search) {
       const q = filters.search.toLowerCase();
       tickets = tickets.filter(t =>
-        (t.section     || '').toLowerCase().includes(q) ||
-        (t.seatNumber  || '').toLowerCase().includes(q) ||
-        (t.memo        || '').toLowerCase().includes(q) ||
-        (t.row         || '').toLowerCase().includes(q)
+        (t.section    || '').toLowerCase().includes(q) ||
+        (t.seatNumber || '').toLowerCase().includes(q) ||
+        (t.memo       || '').toLowerCase().includes(q) ||
+        (t.row        || '').toLowerCase().includes(q)
       );
     }
 
@@ -317,12 +380,9 @@ const DashboardPage = (() => {
       const dA = Store.getConcertDateById(a.concertDateId)?.concertDate || '';
       const dB = Store.getConcertDateById(b.concertDateId)?.concertDate || '';
 
-      if (sortKey === 'concert') return cA.localeCompare(cB, 'ko');
-      if (sortKey === 'concertDate') {
-        const c = cA.localeCompare(cB, 'ko');
-        return c !== 0 ? c : dA.localeCompare(dB);
-      }
-      if (sortKey === 'status') return (a.attendanceType || '').localeCompare(b.attendanceType || '', 'ko');
+      if (sortKey === 'concert')     return cA.localeCompare(cB, 'ko');
+      if (sortKey === 'concertDate') { const c = cA.localeCompare(cB, 'ko'); return c !== 0 ? c : dA.localeCompare(dB); }
+      if (sortKey === 'status')      return (a.attendanceType || '').localeCompare(b.attendanceType || '', 'ko');
       return 0;
     });
 
@@ -331,79 +391,54 @@ const DashboardPage = (() => {
 
   // ─── 이벤트 바인딩 ────────────────────────────────────────
   function bindEvents() {
-    // 뷰 전환
     document.getElementById('view-table-btn')?.addEventListener('click', () => {
       viewMode = 'table';
       refreshList();
-      document.getElementById('view-table-btn').classList.add('active');
-      document.getElementById('view-card-btn').classList.remove('active');
+      document.getElementById('view-table-btn')?.classList.add('active');
+      document.getElementById('view-card-btn')?.classList.remove('active');
     });
     document.getElementById('view-card-btn')?.addEventListener('click', () => {
       viewMode = 'card';
       refreshList();
-      document.getElementById('view-card-btn').classList.add('active');
-      document.getElementById('view-table-btn').classList.remove('active');
+      document.getElementById('view-card-btn')?.classList.add('active');
+      document.getElementById('view-table-btn')?.classList.remove('active');
     });
 
-    // 필터
     document.getElementById('f-concert')?.addEventListener('change', e => {
       filters.concert = e.target.value;
-      filters.date    = ''; // 콘서트 바꾸면 날짜 초기화
+      filters.date    = '';
       render();
     });
     document.getElementById('f-date')?.addEventListener('change', e => {
-      filters.date = e.target.value;
-      refreshList();
+      filters.date = e.target.value; refreshList();
     });
     document.getElementById('f-account')?.addEventListener('change', e => {
-      filters.account = e.target.value;
-      refreshList();
+      filters.account = e.target.value; refreshList();
     });
     document.getElementById('f-status')?.addEventListener('change', e => {
-      filters.status = e.target.value;
-      refreshList();
+      filters.status = e.target.value; refreshList();
     });
 
     const debouncedSearch = Utils.debounce(e => {
-      filters.search = e.target.value;
-      refreshList();
+      filters.search = e.target.value; refreshList();
     }, 300);
     document.getElementById('f-search')?.addEventListener('input', debouncedSearch);
 
     document.getElementById('f-sort')?.addEventListener('change', e => {
-      sortKey = e.target.value;
-      refreshList();
+      sortKey = e.target.value; refreshList();
     });
 
     document.getElementById('clear-filters-btn')?.addEventListener('click', () => {
-      filters  = { concert: '', date: '', account: '', status: '', search: '' };
-      sortKey  = 'concert';
+      filters   = { concert: '', date: '', account: '', status: '', search: '' };
+      sortKey   = 'concert';
       dirtyRows = {};
       render();
     });
 
-    // 인라인 편집 — select
-    el().querySelectorAll('select.inline-select').forEach(sel => {
-      sel.addEventListener('change', e => onFieldChange(e.target));
-    });
-
-    // 인라인 편집 — input (메모)
-    el().querySelectorAll('input.inline-input').forEach(inp => {
-      inp.addEventListener('input', Utils.debounce(e => onFieldChange(e.target), 300));
-    });
-
-    // 저장 버튼
-    el().querySelectorAll('.save-row-btn').forEach(btn => {
-      btn.addEventListener('click', () => saveRow(btn.dataset.id));
-    });
-
-    // 삭제 버튼
-    el().querySelectorAll('.delete-ticket-btn').forEach(btn => {
-      btn.addEventListener('click', () => handleDelete(btn.dataset.id));
-    });
+    bindListEvents();
   }
 
-  // ─── 인라인 편집 핸들러 ────────────────────────────────────
+  // ─── 인라인 편집 이벤트 ────────────────────────────────────
   function onFieldChange(target) {
     const id    = target.dataset.id;
     const field = target.dataset.field;
@@ -417,12 +452,10 @@ const DashboardPage = (() => {
     dirtyRows[id][field] = val;
 
     // 상태 연동 UX
-    if (field === 'attendanceType') {
-      if (val !== '판매') {
-        dirtyRows[id].saleChannel = '';
-        dirtyRows[id].saleResult  = '';
-        dirtyRows[id].saleCompletedDetail = '';
-      }
+    if (field === 'attendanceType' && val !== '판매') {
+      dirtyRows[id].saleChannel = '';
+      dirtyRows[id].saleResult  = '';
+      dirtyRows[id].saleCompletedDetail = '';
     }
     if (field === 'saleChannel' && val) {
       dirtyRows[id].saleResult = '판매중';
@@ -431,29 +464,27 @@ const DashboardPage = (() => {
       dirtyRows[id].saleCompletedDetail = '';
     }
 
-    // 조건부 필드가 바뀌면 전체 리스트 새로고침 (드롭다운 show/hide)
+    // 조건부 필드가 바뀌면 전체 리프레시 (드롭다운 show/hide)
     if (['attendanceType', 'saleResult'].includes(field)) {
       refreshList();
     } else {
-      // 저장 버튼만 표시
       refreshSaveBtns();
     }
   }
 
   function refreshSaveBtns() {
     el().querySelectorAll('tr[data-id], .ticket-card[data-id]').forEach(row => {
-      const id = row.dataset.id;
+      const id      = row.dataset.id;
       const isDirty = !!dirtyRows[id];
       row.classList.toggle('row-dirty', isDirty);
       row.classList.toggle('card-dirty', isDirty);
 
-      // 저장 버튼 추가/제거
       const existingBtn = row.querySelector('.save-row-btn');
       const actionsEl   = row.querySelector('.td-actions, .ticket-card-actions');
       if (isDirty && !existingBtn && actionsEl) {
         const btn = document.createElement('button');
-        btn.className = 'btn btn-xs btn-primary save-row-btn';
-        btn.dataset.id = id;
+        btn.className   = 'btn btn-xs btn-primary save-row-btn';
+        btn.dataset.id  = id;
         btn.textContent = '💾';
         btn.addEventListener('click', () => saveRow(id));
         actionsEl.insertBefore(btn, actionsEl.firstChild);
@@ -466,7 +497,6 @@ const DashboardPage = (() => {
   function refreshList() {
     const area = document.getElementById('ticket-list-area');
     if (area) area.innerHTML = renderTicketList();
-    // 이벤트 재바인딩 (list area 내)
     bindListEvents();
   }
 
