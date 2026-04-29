@@ -86,11 +86,11 @@ const Utils = (() => {
   }
 
   // ─── 선택 옵션 ───────────────────────────────────────────
-  const ID_TYPES       = ['네이버', '이메일', '기존인팍'];
-  const ATTENDANCE     = ['미진', '미나', '판매'];
-  const SALE_CHANNELS  = ['미진티베', '미나티베', '지넌티베', '번장', '트위터'];
-  const SALE_RESULTS   = ['판매중', '판매완료'];
-  const SALE_DETAILS   = ['미진티베완료', '미나티베완료', '번장', '오카'];
+  const ID_TYPES = ['네이버', '이메일', '기존인팍'];
+  const ATTENDANCE = ['미진Go', '미나Go', '판매'];
+  const SALE_CHANNELS = ['미진티베', '미나티베', '지넌티베', '번장', '트위터'];
+  const SALE_RESULTS = ['판매중', '판매완료'];
+  const SALE_DETAILS = ['미진티베완료', '미나티베완료', '번장', '오카'];
 
   // ─── 상태 배지 색상 ───────────────────────────────────────
   function getStatusBadgeClass(type, value) {
@@ -106,18 +106,18 @@ const Utils = (() => {
         '지넌티베': 'badge-lavender',
       },
       saleResult: {
-        '판매중':   'badge-yellow',
+        '판매중': 'badge-yellow',
         '판매완료': 'badge-pink',
       },
       saleCompletedDetail: {
         '미진티베완료': 'badge-pink',
         '미나티베완료': 'badge-mint',
-        '번장':         'badge-lavender',
-        '오카':         'badge-peach',
+        '번장': 'badge-lavender',
+        '오카': 'badge-peach',
       },
       idType: {
-        '네이버':   'badge-mint',
-        '이메일':   'badge-blue',
+        '네이버': 'badge-mint',
+        '이메일': 'badge-blue',
         '기존인팍': 'badge-peach',
       },
     };
@@ -174,7 +174,7 @@ const Utils = (() => {
 
     // 테이블 행 / 카드 배경색 (날짜 shade 반영)
     function getDateBg(concertId, concertDateId) {
-      const def   = getColorDef(concertId);
+      const def = getColorDef(concertId);
       const shade = dateShade[concertDateId] ?? 0;
       return shade === 0 ? def.light : def.mid;
     }
@@ -182,7 +182,7 @@ const Utils = (() => {
     // 테이블 행 인라인 스타일 문자열
     function getConcertStyle(concertId, concertDateId) {
       const def = getColorDef(concertId);
-      const bg  = getDateBg(concertId, concertDateId);
+      const bg = getDateBg(concertId, concertDateId);
       return `border-left: 4px solid ${def.border}; background: ${bg};`;
     }
 
