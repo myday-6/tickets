@@ -242,7 +242,7 @@ const DashboardPage = (() => {
               <input class="inline-input sale-price-input" type="text" inputmode="numeric" placeholder="가격"
                      data-field="salePrice" data-id="${t.id}"
                      value="${Utils.escapeHtml(current.salePrice || '')}">
-              ${(current.salePrice && (['미진티베', '미나티베', '지넌티베'].includes(current.saleChannel))) 
+              ${(current.salePrice && (['미진티베', '미나티베', '지넌티베', '화경티베'].includes(current.saleChannel))) 
                   ? `<div class="net-price">실수령: ${Math.floor(Number(current.salePrice) * 0.9).toLocaleString()}원</div>` 
                   : ''}
             </div>
@@ -355,7 +355,7 @@ const DashboardPage = (() => {
               <input class="inline-input sale-price-input" type="text" inputmode="numeric" placeholder="가격"
                      data-field="salePrice" data-id="${t.id}"
                      value="${Utils.escapeHtml(current.salePrice || '')}">
-              ${(current.salePrice && (['미진티베', '미나티베', '지넌티베'].includes(current.saleChannel))) 
+              ${(current.salePrice && (['미진티베', '미나티베', '지넌티베', '화경티베'].includes(current.saleChannel))) 
                   ? `<div class="net-price">실수령: ${Math.floor(Number(current.salePrice) * 0.9).toLocaleString()}원</div>` 
                   : ''}
             </div>
@@ -531,7 +531,7 @@ const DashboardPage = (() => {
     const containers = el().querySelectorAll(`[data-id="${id}"] .sale-price-wrapper`);
     containers.forEach(container => {
       let netPriceEl = container.querySelector('.net-price');
-      const isFeeTarget = ['미진티베', '미나티베', '지넌티베'].includes(data.saleChannel);
+      const isFeeTarget = ['미진티베', '미나티베', '지넌티베', '화경티베'].includes(data.saleChannel);
       
       if (data.salePrice && isFeeTarget) {
         const netValue = Math.floor(Number(data.salePrice) * 0.9).toLocaleString();

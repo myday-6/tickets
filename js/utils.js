@@ -177,9 +177,9 @@ const Utils = (() => {
   // ─── 선택 옵션 ───────────────────────────────────────────
   const ID_TYPES = ['네이버', '이메일', '기존인팍'];
   const ATTENDANCE = ['미진Go', '미나Go', '판매'];
-  const SALE_CHANNELS = ['미진티베', '미나티베', '지넌티베', '번장', '트위터'];
+  const SALE_CHANNELS = ['미진티베', '미나티베', '지넌티베', '화경티베', '번장', '트위터'];
   const SALE_RESULTS = ['판매중', '판매완료'];
-  const SALE_DETAILS = ['미진티베완료', '미나티베완료', '번장', '오카'];
+  const SALE_DETAILS = ['미진티베완료', '미나티베완료', '지넌티베완료', '화경티베완료', '번장', '오카'];
 
   // ─── 상태 배지 색상 ───────────────────────────────────────
   function getStatusBadgeClass(type, value) {
@@ -193,6 +193,7 @@ const Utils = (() => {
         '미진티베': 'badge-mint',
         '미나티베': 'badge-blue',
         '지넌티베': 'badge-lavender',
+        '화경티베': 'badge-peach',
       },
       saleResult: {
         '판매중': 'badge-yellow',
@@ -201,6 +202,8 @@ const Utils = (() => {
       saleCompletedDetail: {
         '미진티베완료': 'badge-pink',
         '미나티베완료': 'badge-mint',
+        '지넌티베완료': 'badge-lavender',
+        '화경티베완료': 'badge-pink',
         '번장': 'badge-lavender',
         '오카': 'badge-peach',
       },
